@@ -1,0 +1,331 @@
+Label,Name,TargetEmo,ComparisonEmo,Distance,Label1,Label2,Soundtrack,Level
+anger sad,17,1.7463,1.7463,0,1,3,The Untouchables,1
+sad anger,100,2.1489,2.1064,0.0425,3,1,Cape Fear,1
+anger sad,62,2.9362,2.7447,0.1915,1,3,Shakespeare In Love,1
+tender happy,49,5.1194,4.9254,0.194,4,2,Juha,1
+sad anger,16,2.1045,1.8806,0.2239,3,1,Running Scared,1
+happy sad,60,2.7234,2.4681,0.2553,2,3,Outbreak,1
+sad tender,98,3.1915,2.8936,0.2979,3,4,Naked Lunch,1
+tender sad,83,4.2553,3.9574,0.2979,4,3,Big Fish,1
+anger sad,15,2,1.7015,0.2985,1,3,Hannibal,1
+happy tender,26,4.6567,4.3433,0.3134,2,4,The Omen,1
+tender sad,39,5.0896,4.7761,0.3135,4,3,Shakespeare In Love,1
+tender happy,51,4.9574,4.6383,0.3191,4,2,Juha,1
+sad tender,46,4.806,4.403,0.403,3,4,Batman,1
+anger sad,70,2.1702,1.6809,0.4893,1,3,Grizzle Man,1
+sad tender,102,3.8085,3.2979,0.5106,3,4,Shakespeare In Love,1
+anger sad,64,2.1064,1.5532,0.5532,1,3,The Fifth Element,1
+anger tender,17,1.7463,1.1642,0.5821,1,4,The Untouchables,1
+anger happy,17,1.7463,1.1045,0.6418,1,2,The Untouchables,1
+tender sad,54,5.2553,4.5745,0.680800000000001,4,3,Pride & Prejudice,1
+happy sad,61,3,2.3191,0.6809,2,3,Juha,1
+happy tender,60,2.7234,2.0213,0.7021,2,4,Outbreak,1
+anger sad,12,2.2836,1.5672,0.7164,1,3,JFK,2
+anger happy,6,3.2687,2.5522,0.7165,1,2,Crouching Tiger jne.,2
+sad anger,96,3.4681,2.7447,0.7234,3,1,The Missing,2
+sad happy,16,2.1045,1.3731,0.7314,3,2,Running Scared,2
+sad tender,58,5.0638,4.2979,0.765899999999999,3,4,Vertigo OST,2
+anger happy,13,2.1343,1.3134,0.8209,1,2,JFK,2
+anger happy,64,2.1064,1.2766,0.8298,1,2,The Fifth Element,2
+happy tender,61,3,2.1702,0.8298,2,4,Juha,2
+sad tender,40,5.3284,4.4627,0.8657,3,4,The English Patient,2
+sad tender,16,2.1045,1.2239,0.8806,3,4,Running Scared,2
+sad tender,103,3.6383,2.7447,0.8936,3,4,The Fifth Element,2
+sad anger,65,3.2766,2.3617,0.9149,3,1,Big Fish,2
+anger sad,13,2.1343,1.209,0.9253,1,3,JFK,2
+anger happy,97,2.4681,1.5319,0.9362,1,2,Shallow Grave,2
+anger tender,15,2,1.0597,0.9403,1,4,Hannibal,2
+anger happy,15,2,1.0448,0.9552,1,2,Hannibal,2
+sad tender,100,2.1489,1.1915,0.9574,3,4,Cape Fear,2
+happy tender,76,3.4468,2.4894,0.9574,2,4,Juha,2
+anger tender,64,2.1064,1.1489,0.9575,1,4,The Fifth Element,2
+tender sad,45,4.3134,3.3134,1,4,3,Oliwer Twist,2
+anger happy,12,2.2836,1.2836,1,1,2,JFK,2
+tender happy,101,4.9362,3.9362,1,4,2,Juha,2
+anger tender,12,2.2836,1.2687,1.0149,1,4,JFK,3
+sad tender,108,5.1277,4.0851,1.0426,3,4,Gladiator,3
+anger tender,13,2.1343,1.0597,1.0746,1,4,JFK,3
+anger tender,70,2.1702,1.0638,1.1064,1,4,Grizzle Man,3
+anger happy,70,2.1702,1.0426,1.1276,1,2,Grizzle Man,3
+sad tender,37,4.1791,3.0448,1.1343,3,4,Batman,3
+sad happy,100,2.1489,1,1.1489,3,2,Cape Fear,3
+happy sad,76,3.4468,2.2553,1.1915,2,3,Juha,3
+happy tender,53,4.7872,3.5957,1.1915,2,4,Gladiator,3
+anger sad,11,2.791,1.597,1.194,1,3,Batman Returns,3
+anger sad,14,2.6119,1.3582,1.2537,1,3,The Alien Trilogy,3
+anger sad,91,3.383,2.1277,1.2553,1,3,The Alien Trilogy,3
+tender happy,52,4.617,3.3404,1.2766,4,2,Blanc,3
+anger sad,97,2.4681,1.1915,1.2766,1,3,Shallow Grave,3
+tender sad,48,4.4328,3.1493,1.2835,4,3,Dracula,3
+anger sad,68,3.1277,1.7872,1.3405,1,3,Road To Perdition,3
+sad anger,8,5.1493,3.806,1.3433,3,1,Man of Galilee CD1,3
+sad tender,38,4.0746,2.7015,1.3731,3,4,Dracula,3
+sad happy,102,3.8085,2.4043,1.4042,3,2,Shakespeare In Love,3
+sad happy,98,3.1915,1.7872,1.4043,3,2,Naked Lunch,3
+happy anger,60,2.7234,1.2766,1.4468,2,1,Outbreak,3
+sad tender,67,3.5745,2.1277,1.4468,3,4,Lethal weapon 3,3
+anger tender,97,2.4681,1.0213,1.4468,1,4,Shallow Grave,4
+tender happy,43,5.7313,4.2537,1.4776,4,2,Dances with Wolves,4
+anger happy,14,2.6119,1.0746,1.5373,1,2,The Alien Trilogy,4
+sad tender,19,3.6866,2.1194,1.5672,3,4,Lethal weapon 3,4
+tender sad,110,4.8511,3.2766,1.5745,4,3,Big Fish,4
+sad happy,103,3.6383,2.0638,1.5745,3,2,The Fifth Element,4
+sad tender,63,3.9149,2.3191,1.5958,3,4,Batman,4
+anger tender,14,2.6119,1.0149,1.597,1,4,The Alien Trilogy,4
+sad tender,50,5.2836,3.6866,1.597,3,4,Oliwer Twist,4
+tender happy,110,4.8511,3.234,1.6171,4,2,Big Fish,4
+tender happy,107,5.8936,4.2553,1.6383,4,2,The Godfarher,4
+tender happy,47,5.3881,3.7463,1.6418,4,2,Oliwer Twist,4
+tender happy,29,5.3134,3.6269,1.6865,4,2,The Portait of a Lady,4
+anger happy,11,2.791,1.0896,1.7014,1,2,Batman Returns,4
+tender happy,45,4.3134,2.6119,1.7015,4,2,Oliwer Twist,4
+sad tender,65,3.2766,1.5745,1.7021,3,4,Big Fish,4
+anger tender,11,2.791,1.0746,1.7164,1,4,Batman Returns,4
+anger sad,6,3.2687,1.5522,1.7165,1,3,Crouching Tiger jne.,4
+happy tender,59,4.3191,2.5957,1.7234,2,4,Vertigo OST,4
+happy anger,61,3,1.2553,1.7447,2,1,Juha,4
+anger tender,62,2.9362,1.1702,1.766,1,4,Shakespeare In Love,4
+tender sad,52,4.617,2.8085,1.8085,4,3,Blanc,4
+sad tender,104,5.5957,3.7872,1.8085,3,4,Crouching Tiger,5
+tender sad,30,4.7015,2.8806,1.8209,4,3,Nostradamus,5
+tender happy,83,4.2553,2.4255,1.8298,4,2,Big Fish,5
+tender happy,30,4.7015,2.8657,1.8358,4,2,Nostradamus,5
+anger happy,20,4.1791,2.3284,1.8507,1,2,Man of Galilee CD1,5
+tender sad,47,5.3881,3.5224,1.8657,4,3,Oliwer Twist,5
+sad tender,96,3.4681,1.5957,1.8724,3,4,The Missing,5
+sad anger,98,3.1915,1.2979,1.8936,3,1,Naked Lunch,5
+tender happy,28,5.3433,3.4179,1.9254,4,2,Grizzly Man,5
+anger happy,62,2.9362,1,1.9362,1,2,Shakespeare In Love,5
+sad tender,82,5.3617,3.4043,1.9574,3,4,Big Fish,5
+anger sad,94,4,2.0426,1.9574,1,3,Hellraiser,5
+sad tender,85,3.6596,1.6809,1.9787,3,4,Oliwer Twist,5
+sad happy,65,3.2766,1.2553,2.0213,3,2,Big Fish,5
+happy tender,56,5.1064,3.0426,2.0638,2,4,Man of Galilee CD1,5
+anger tender,68,3.1277,1.0426,2.0851,1,4,Road To Perdition,5
+anger sad,66,3.8298,1.7447,2.0851,1,3,The English Patient,5
+sad tender,78,4.8511,2.7447,2.1064,3,4,Crouching Tiger,5
+anger happy,68,3.1277,1,2.1277,1,2,Road To Perdition,5
+anger tender,6,3.2687,1.1194,2.1493,1,4,Crouching Tiger jne.,5
+happy sad,80,4,1.8085,2.1915,2,3,Oliwer Twist,5
+sad happy,19,3.6866,1.4925,2.1941,3,2,Lethal weapon 3,5
+anger sad,10,4.4179,2.209,2.2089,1,3,Oliwer Twist,6
+anger happy,9,4.1343,1.9104,2.2239,1,2,The Untouchables,6
+sad happy,67,3.5745,1.3191,2.2554,3,2,Lethal weapon 3,6
+happy sad,59,4.3191,2.0213,2.2978,2,3,Vertigo OST,6
+sad anger,67,3.5745,1.2553,2.3192,3,1,Lethal weapon 3,6
+anger tender,91,3.383,1.0638,2.3192,1,4,The Alien Trilogy,6
+happy tender,80,4,1.6596,2.3404,2,4,Oliwer Twist,6
+anger happy,91,3.383,1.0426,2.3404,1,2,The Alien Trilogy,6
+sad anger,99,4.8936,2.5532,2.3404,3,1,Dracula,6
+sad anger,19,3.6866,1.3433,2.3433,3,1,Lethal weapon 3,6
+tender happy,42,6.0597,3.7015,2.3582,4,2,Pride & Prejudice,6
+sad happy,96,3.4681,1.0851,2.383,3,2,The Missing,6
+tender sad,29,5.3134,2.8955,2.4179,4,3,The Portait of a Lady,6
+sad anger,85,3.6596,1.234,2.4256,3,1,Oliwer Twist,6
+sad happy,85,3.6596,1.234,2.4256,3,2,Oliwer Twist,6
+tender sad,51,4.9574,2.5106,2.4468,4,3,Juha,6
+happy anger,76,3.4468,1,2.4468,2,1,Juha,6
+sad happy,37,4.1791,1.7164,2.4627,3,2,Batman,6
+happy tender,57,4.4894,2.0213,2.4681,2,4,Shakespeare In Love,6
+sad anger,103,3.6383,1.1702,2.4681,3,1,The Fifth Element,6
+happy sad,26,4.6567,2.1642,2.4925,2,3,The Omen,6
+tender happy,48,4.4328,1.9403,2.4925,4,2,Dracula,6
+happy sad,57,4.4894,1.9574,2.532,2,3,Shakespeare In Love,7
+anger sad,7,4.6418,2.0746,2.5672,1,3,Batman Returns,7
+sad tender,90,5,2.4255,2.5745,3,4,Batman Returns,7
+anger sad,95,4.5319,1.9362,2.5957,1,3,Oliwer Twist,7
+tender sad,44,5.4776,2.8657,2.6119,4,3,Pride & Prejudice,7
+tender sad,28,5.3433,2.7164,2.6269,4,3,Grizzly Man,7
+tender happy,44,5.4776,2.8507,2.6269,4,2,Pride & Prejudice,7
+tender sad,101,4.9362,2.2766,2.6596,4,3,Juha,7
+sad anger,63,3.9149,1.234,2.6809,3,1,Batman,7
+happy tender,77,4.5319,1.8298,2.7021,2,4,Lethal weapon 3,7
+sad happy,63,3.9149,1.1915,2.7234,3,2,Batman,7
+anger tender,94,4,1.2553,2.7447,1,4,Hellraiser,7
+anger sad,9,4.1343,1.3731,2.7612,1,3,The Untouchables,7
+happy tender,74,4.8723,2.1064,2.7659,2,4,Shine,7
+sad anger,102,3.8085,1.0426,2.7659,3,1,Shakespeare In Love,7
+anger happy,66,3.8298,1.0638,2.766,1,2,The English Patient,7
+sad tender,36,5.209,2.4328,2.7762,3,4,Angel Heart,7
+anger tender,66,3.8298,1.0426,2.7872,1,4,The English Patient,7
+anger sad,20,4.1791,1.3881,2.791,1,3,Man of Galilee CD1,7
+sad tender,89,4.9362,2.1277,2.8085,3,4,Blanc,7
+tender sad,49,5.1194,2.2239,2.8955,4,3,Juha,7
+sad happy,38,4.0746,1.1493,2.9253,3,2,Dracula,7
+happy sad,53,4.7872,1.8511,2.9361,2,3,Gladiator,8
+happy anger,80,4,1.0638,2.9362,2,1,Oliwer Twist,8
+tender happy,41,6.6567,3.7164,2.9403,4,2,Shine,8
+sad tender,35,5.7313,2.791,2.9403,3,4,Man of Galilee CD1,8
+sad tender,34,6.1194,3.1493,2.9701,3,4,Big Fish,8
+anger sad,18,4.4179,1.4478,2.9701,1,3,The Fifth Element,8
+anger happy,94,4,1.0213,2.9787,1,2,Hellraiser,8
+happy sad,77,4.5319,1.5532,2.9787,2,3,Lethal weapon 3,8
+sad anger,38,4.0746,1.0896,2.985,3,1,Dracula,8
+sad anger,37,4.1791,1.1642,3.0149,3,1,Batman,8
+happy anger,57,4.4894,1.4681,3.0213,2,1,Shakespeare In Love,8
+sad tender,99,4.8936,1.8298,3.0638,3,4,Dracula,8
+tender happy,39,5.0896,2,3.0896,4,2,Shakespeare In Love,8
+anger tender,20,4.1791,1.0597,3.1194,1,4,Man of Galilee CD1,8
+sad happy,78,4.8511,1.7234,3.1277,3,2,Crouching Tiger,8
+anger tender,9,4.1343,1,3.1343,1,4,The Untouchables,8
+sad tender,84,6.1702,3.0213,3.1489,3,4,Blanc,8
+anger happy,7,4.6418,1.4925,3.1493,1,2,Batman Returns,8
+sad anger,32,5.1493,1.9851,3.1642,3,1,Running Scared,8
+anger sad,5,6.1343,2.9552,3.1791,1,3,The Fifth Element,8
+sad tender,31,6.7761,3.5821,3.194,3,4,The English Patient,8
+anger happy,18,4.4179,1.209,3.2089,1,2,The Fifth Element,8
+sad tender,32,5.1493,1.9403,3.209,3,4,Running Scared,9
+happy anger,59,4.3191,1.1064,3.2127,2,1,Vertigo OST,9
+sad tender,81,6.383,3.1489,3.2341,3,4,Juha,9
+sad happy,40,5.3284,2.0896,3.2388,3,2,The English Patient,9
+sad happy,46,4.806,1.5672,3.2388,3,2,Batman,9
+tender anger,83,4.2553,1,3.2553,4,1,Big Fish,9
+sad happy,58,5.0638,1.766,3.2978,3,2,Vertigo OST,9
+tender anger,45,4.3134,1,3.3134,4,1,Oliwer Twist,9
+anger sad,4,5.4179,2.1045,3.3134,1,3,Cape Fear,9
+anger tender,18,4.4179,1.1045,3.3134,1,4,The Fifth Element,9
+sad tender,88,5.6596,2.3191,3.3405,3,4,Blanc,9
+sad anger,35,5.7313,2.3881,3.3432,3,1,Man of Galilee CD1,9
+anger tender,10,4.4179,1.0746,3.3433,1,4,Oliwer Twist,9
+tender happy,54,5.2553,1.8936,3.3617,4,2,Pride & Prejudice,9
+tender anger,48,4.4328,1.0597,3.3731,4,1,Dracula,9
+anger happy,10,4.4179,1.0448,3.3731,1,2,Oliwer Twist,9
+happy sad,56,5.1064,1.7234,3.383,2,3,Man of Galilee CD1,9
+tender happy,106,6.5745,3.1277,3.4468,4,2,Lethal weapon 3,9
+tender sad,107,5.8936,2.4255,3.4681,4,3,The Godfarher,9
+happy sad,74,4.8723,1.383,3.4893,2,3,Shine,9
+happy anger,77,4.5319,1.0426,3.4893,2,1,Lethal weapon 3,9
+anger tender,95,4.5319,1.0426,3.4893,1,4,Oliwer Twist,9
+sad tender,109,7,3.4681,3.5319,3,4,Pride & Prejudice,10
+anger happy,95,4.5319,1,3.5319,1,2,Oliwer Twist,10
+happy anger,74,4.8723,1.3191,3.5532,2,1,Shine,10
+tender sad,42,6.0597,2.4925,3.5672,4,3,Pride & Prejudice,10
+sad anger,90,5,1.4043,3.5957,3,1,Batman Returns,10
+anger tender,7,4.6418,1.0448,3.597,1,4,Batman Returns,10
+happy anger,26,4.6567,1.0448,3.6119,2,1,The Omen,10
+tender anger,52,4.617,1,3.617,4,1,Blanc,10
+sad anger,78,4.8511,1.234,3.6171,3,1,Crouching Tiger,10
+happy tender,55,5.5957,1.9574,3.6383,2,4,Dances with Wolves,10
+tender sad,41,6.6567,3.0149,3.6418,4,3,Shine,10
+sad happy,50,5.2836,1.6418,3.6418,3,2,Oliwer Twist,10
+tender anger,30,4.7015,1.0299,3.6716,4,1,Nostradamus,10
+tender sad,43,5.7313,2.0149,3.7164,4,3,Dances with Wolves,10
+sad anger,46,4.806,1.0448,3.7612,3,1,Batman,10
+sad tender,8,5.1493,1.3731,3.7762,3,4,Man of Galilee CD1,10
+sad tender,87,5.5957,1.8085,3.7872,3,4,Road To Perdition,10
+happy anger,53,4.7872,1,3.7872,2,1,Gladiator,10
+sad happy,99,4.8936,1.1064,3.7872,3,2,Dracula,10
+tender anger,110,4.8511,1,3.8511,4,1,Big Fish,10
+sad anger,89,4.9362,1.0851,3.8511,3,1,Blanc,10
+sad happy,36,5.209,1.3433,3.8657,3,2,Angel Heart,10
+sad happy,89,4.9362,1.0426,3.8936,3,2,Blanc,11
+tender anger,101,4.9362,1,3.9362,4,1,Juha,11
+sad happy,8,5.1493,1.194,3.9553,3,2,Man of Galilee CD1,11
+tender anger,51,4.9574,1,3.9574,4,1,Juha,11
+sad happy,108,5.1277,1.1702,3.9575,3,2,Gladiator,11
+happy tender,27,6.2687,2.2985,3.9702,2,4,Oliwer Twist,11
+sad anger,86,5.9362,1.9574,3.9788,3,1,Running Scared,11
+sad anger,58,5.0638,1.0638,4,3,1,Vertigo OST,11
+happy anger,56,5.1064,1.1064,4,2,1,Man of Galilee CD1,11
+sad happy,82,5.3617,1.3617,4,3,2,Big Fish,11
+sad anger,87,5.5957,1.5957,4,3,1,Road To Perdition,11
+sad happy,90,5,1,4,3,2,Batman Returns,11
+anger sad,93,5.5106,1.5106,4,1,3,Babylon 5,11
+tender anger,39,5.0896,1.0597,4.0299,4,1,Shakespeare In Love,11
+happy tender,25,6.2836,2.2239,4.0597,2,4,Oliwer Twist,11
+sad happy,32,5.1493,1.0896,4.0597,3,2,Running Scared,11
+sad happy,35,5.7313,1.6567,4.0746,3,2,Man of Galilee CD1,11
+sad anger,36,5.209,1.1045,4.1045,3,1,Angel Heart,11
+sad anger,108,5.1277,1.0213,4.1064,3,1,Gladiator,11
+tender anger,49,5.1194,1,4.1194,4,1,Juha,11
+tender sad,106,6.5745,2.4468,4.1277,4,3,Lethal weapon 3,11
+sad tender,33,7.1791,3.0299,4.1492,3,4,The Portait of a Lady,11
+anger sad,2,5.7612,1.597,4.1642,1,3,The Rainmaker,12
+happy anger,55,5.5957,1.383,4.2127,2,1,Dances with Wolves,12
+anger happy,4,5.4179,1.194,4.2239,1,2,Cape Fear,12
+happy tender,73,6.3617,2.1277,4.234,2,4,Shine,12
+tender anger,54,5.2553,1,4.2553,4,1,Pride & Prejudice,12
+sad anger,50,5.2836,1.0149,4.2687,3,1,Oliwer Twist,12
+sad happy,104,5.5957,1.3191,4.2766,3,2,Crouching Tiger,12
+sad anger,82,5.3617,1.0638,4.2979,3,1,Big Fish,12
+tender anger,29,5.3134,1,4.3134,4,1,The Portait of a Lady,12
+sad anger,40,5.3284,1.0149,4.3135,3,1,The English Patient,12
+tender anger,28,5.3433,1.0149,4.3284,4,1,Grizzly Man,12
+anger tender,4,5.4179,1.0597,4.3582,1,4,Cape Fear,12
+tender anger,47,5.3881,1.0299,4.3582,4,1,Oliwer Twist,12
+sad tender,86,5.9362,1.5745,4.3617,3,4,Running Scared,12
+happy sad,55,5.5957,1.1702,4.4255,2,3,Dances with Wolves,12
+happy tender,21,6.6269,2.194,4.4329,2,4,The Rainmaker,12
+anger happy,93,5.5106,1.0638,4.4468,1,2,Babylon 5,12
+tender anger,44,5.4776,1.0149,4.4627,4,1,Pride & Prejudice,12
+sad anger,88,5.6596,1.1915,4.4681,3,1,Blanc,12
+anger tender,93,5.5106,1,4.5106,1,4,Babylon 5,12
+sad anger,104,5.5957,1.0851,4.5106,3,1,Crouching Tiger,12
+anger sad,69,6.383,1.8298,4.5532,1,3,Hellraiser,12
+sad happy,87,5.5957,1,4.5957,3,2,Road To Perdition,13
+happy sad,27,6.2687,1.6716,4.5971,2,3,Oliwer Twist,13
+anger sad,1,6.3881,1.7463,4.6418,1,3,Lethal weapon 3,13
+anger tender,2,5.7612,1.1045,4.6567,1,4,The Rainmaker,13
+sad happy,88,5.6596,1,4.6596,3,2,Blanc,13
+anger happy,2,5.7612,1.0896,4.6716,1,2,The Rainmaker,13
+tender anger,43,5.7313,1.0299,4.7014,4,1,Dances with Wolves,13
+happy sad,25,6.2836,1.5821,4.7015,2,3,Oliwer Twist,13
+sad happy,34,6.1194,1.403,4.7164,3,2,Big Fish,13
+anger sad,3,6.3134,1.5522,4.7612,1,3,The Alien Trilogy,13
+anger sad,92,6.4681,1.6596,4.8085,1,3,The Fifth Element,13
+tender anger,107,5.8936,1,4.8936,4,1,The Godfarher,13
+sad happy,86,5.9362,1.0213,4.9149,3,2,Running Scared,13
+sad anger,34,6.1194,1.1343,4.9851,3,1,Big Fish,13
+anger happy,3,6.3134,1.3134,5,1,2,The Alien Trilogy,13
+anger happy,5,6.1343,1.0746,5.0597,1,2,The Fifth Element,13
+anger tender,5,6.1343,1.0746,5.0597,1,4,The Fifth Element,13
+tender anger,42,6.0597,1,5.0597,4,1,Pride & Prejudice,13
+happy tender,71,6.8936,1.7872,5.1064,2,4,The Untouchables,13
+sad anger,84,6.1702,1.0426,5.1276,3,1,Blanc,13
+sad happy,84,6.1702,1.0426,5.1276,3,2,Blanc,13
+anger happy,1,6.3881,1.209,5.1791,1,2,Lethal weapon 3,13
+happy anger,27,6.2687,1.0896,5.1791,2,1,Oliwer Twist,14
+happy sad,73,6.3617,1.1702,5.1915,2,3,Shine,14
+happy anger,25,6.2836,1.0896,5.194,2,1,Oliwer Twist,14
+sad happy,81,6.383,1.1277,5.2553,3,2,Juha,14
+anger tender,3,6.3134,1.0149,5.2985,1,4,The Alien Trilogy,14
+happy tender,22,6.806,1.5075,5.2985,2,4,Batman,14
+happy anger,73,6.3617,1.0426,5.3191,2,1,Shine,14
+happy anger,79,6.5957,1.2553,5.3404,2,1,Batman,14
+anger tender,69,6.383,1.0213,5.3617,1,4,Hellraiser,14
+anger tender,1,6.3881,1.0149,5.3732,1,4,Lethal weapon 3,14
+anger happy,69,6.383,1,5.383,1,2,Hellraiser,14
+sad anger,81,6.383,1,5.383,3,1,Juha,14
+happy tender,79,6.5957,1.1915,5.4042,2,4,Batman,14
+anger happy,92,6.4681,1.0213,5.4468,1,2,The Fifth Element,14
+anger tender,92,6.4681,1,5.4681,1,4,The Fifth Element,14
+happy anger,22,6.806,1.3284,5.4776,2,1,Batman,14
+happy sad,21,6.6269,1.1194,5.5075,2,3,The Rainmaker,14
+happy sad,22,6.806,1.2985,5.5075,2,3,Batman,14
+sad happy,31,6.7761,1.2537,5.5224,3,2,The English Patient,14
+happy sad,79,6.5957,1.0213,5.5744,2,3,Batman,14
+tender anger,106,6.5745,1,5.5745,4,1,Lethal weapon 3,14
+happy anger,21,6.6269,1,5.6269,2,1,The Rainmaker,14
+tender anger,41,6.6567,1.0149,5.6418,4,1,Shine,15
+happy anger,24,6.9403,1.2687,5.6716,2,1,Man of Galilee CD1,15
+happy tender,24,6.9403,1.2687,5.6716,2,4,Man of Galilee CD1,15
+sad anger,31,6.7761,1.1045,5.6716,3,1,The English Patient,15
+happy tender,75,7.0851,1.4043,5.6808,2,4,Batman,15
+happy sad,71,6.8936,1.1064,5.7872,2,3,The Untouchables,15
+happy sad,24,6.9403,1.0896,5.8507,2,3,Man of Galilee CD1,15
+happy anger,75,7.0851,1.2128,5.8723,2,1,Batman,15
+happy anger,71,6.8936,1.0213,5.8723,2,1,The Untouchables,15
+sad anger,109,7,1.1277,5.8723,3,1,Pride & Prejudice,15
+sad happy,109,7,1.0213,5.9787,3,2,Pride & Prejudice,15
+happy sad,75,7.0851,1.0426,6.0425,2,3,Batman,15
+sad happy,33,7.1791,1.1194,6.0597,3,2,The Portait of a Lady,15
+sad anger,33,7.1791,1.0746,6.1045,3,1,The Portait of a Lady,15
+happy anger,72,7.3404,1.1915,6.1489,2,1,Man of Galilee CD1,15
+happy tender,72,7.3404,1.1064,6.234,2,4,Man of Galilee CD1,15
+happy sad,72,7.3404,1.0851,6.2553,2,3,Man of Galilee CD1,15
+happy tender,105,7.8511,1.4468,6.4043,2,4,Pride & Prejudice,15
+happy sad,105,7.8511,1.1915,6.6596,2,3,Pride & Prejudice,15
+happy tender,23,8.209,1.4478,6.7612,2,4,Shallow Grave,15
+happy anger,105,7.8511,1,6.8511,2,1,Pride & Prejudice,15
+happy sad,23,8.209,1.1045,7.1045,2,3,Shallow Grave,15
+happy anger,23,8.209,1.0448,7.1642,2,1,Shallow Grave,16
