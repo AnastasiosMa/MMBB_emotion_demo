@@ -35,11 +35,8 @@ end
 trials = sortrows(trials,9,'ascend');
 
 %figure,plot(sort(dist_ratings{:,'Distance'})), xlabel('Trials'),ylabel('Distance')
-figure
 for i = 1:4
     hold on
-    plot(cell_trials{i}.Distance)
+    plot()
 end
-legend(emo_labels),xlabel('Trials'),ylabel('Distance')
-hold off
 writetable(trials,'trials.csv')

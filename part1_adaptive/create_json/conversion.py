@@ -8,7 +8,9 @@ timestamp = now.strftime("%Y%m%d%H%M%S")
 
 CSV_FILEPATH = "assets/trials.csv"
 JSON_OUTPUTFILE = "assets/trials_" + timestamp + ".json"
-EXPECTED_COLUMN_NAMES = ["true_trial", "false_trial", "emotion", "difficulty", "trial", "level"]
+EXPECTED_COLUMN_NAMES = ['Label','Name','TargetEmo','ComparisonEmo','Distance','Label1','Label2',
+                         'Soundtrack','Level']
+
 
 trials = {}
 
@@ -22,8 +24,8 @@ with open(CSV_FILEPATH) as csv_file:
         csv_column_names = list(row.keys())
         assert set(csv_column_names) == set(EXPECTED_COLUMN_NAMES)
 
-        level = row["level"]
-        emotion = row["emotion"]
+        level = row["Level"]
+        emotion = row["Label1"]
         if level not in trials.keys():
             trials[level] = {}
 

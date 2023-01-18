@@ -106,8 +106,8 @@
           trial1.data.wrong_emotion = emotions[current_trial['Label2']-1]
           //trial1.data.trial_index = current_trial['trial']
           trial1.data.level = current_level
-          trial1.choices = [images_blurred[trial_images[0]-1]['img'], images_blurred[trial_images[1]-1]['img']]
-          trial1.update_choices = [images[trial_images[0]-1]['img'], images[trial_images[1]-1]['img']]
+          trial1.choices = [images_blurred[trial_images[0]-1], images_blurred[trial_images[1]-1]]
+          trial1.update_choices = [images[trial_images[0]-1], images[trial_images[1]-1]]
       },
         on_finish: function(data){
           // Score the response as correct or incorrect.
