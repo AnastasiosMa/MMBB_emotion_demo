@@ -48,6 +48,7 @@
       var candidate_trial = []
       var correct_response = []
       var trial_images = []
+      var excerpt_history = []
 
       var emotion_order = []
       for (let i=0;i<N/emotions_numeric.length;i++) {
@@ -91,7 +92,8 @@
 
           current_emotion = emotions[emotion_order[epoch]-1]
           candidate_trial = trials[String(current_level)][String(emotion_order[epoch])]
-          current_trial = jsPsych.randomization.sampleWithoutReplacement(candidate_trial,1)[0] 
+          current_trial = jsPsych.randomization.sampleWithoutReplacement(candidate_trial,1)[0]
+          excerpt_history[epoch] = current_trial['Label1'] 
           excerpt_names = [current_trial['Name']]
           trial_images = [current_trial['Label1'],current_trial['Label2']].sort();
           trial_track = excerpt_names[0]
@@ -112,7 +114,6 @@
         on_finish: function(data){
           // Score the response as correct or incorrect.
           jsPsych.setProgressBar((epoch+1)/N)
-          console.log(trial_images.findIndex(element => element == current_trial['Label1']))
           if(data.response == trial_images.findIndex(element => element == current_trial['Label1'])){
             correct_response = 1;
             trial1.data.correct_response = 1;
