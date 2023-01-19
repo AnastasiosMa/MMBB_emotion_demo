@@ -30,13 +30,7 @@
       { img: "../basic_emoji/v1a1.png",  type: 'Sad'},
       { img: "../basic_emoji/v5a1.png",  type: 'Tender'}
     ];
-    var images_blurred = [
-      { img: "../basic_emoji/v1a5.png",  type: 'Anger'},
-      { img: "../basic_emoji/v5a5.png",  type: 'Happy'},
-      { img: "../basic_emoji/v1a1.png",  type: 'Sad'},
-      { img: "../basic_emoji/v5a1.png",  type: 'Tender'}
-    ];
-
+    
       var emotions = ['angry','happy','sad','tender']
       var emotions_numeric = [1,2,3,4]
       var current_level = 1
@@ -62,7 +56,7 @@
       //trials 
       var instruction = {
           type: jsPsychInstructions,
-          pages: ['<p style="font-size:6vw;">Emotion game v6.</p>','<p style="font-size:30px;">Instructions</p>'+'<br>In this section, you will listen to short music'+
+          pages: ['<p style="font-size:6vw;">Emotion Battery.</p>','<p style="font-size:30px;">Instructions</p>'+'<br>In this section, you will listen to short music'+
         ' tracks and asked to choose the emotion it mostly represents. The emotions in question are <strong>happy, sad, tender, angry, </strong> and <strong>fearful.</strong>'+
         ' Listen to the music track first and then make your choice.', '<p style="font-size:30px;">Trial</p>'+'<br>' +
         'You will now be presented with a trial to get familiar with the task. Your response will not be used in the analysis. Please also adjust the volume to a comfortable level. '],
@@ -101,7 +95,7 @@
             trial_track = '0' + trial_track
           }
           trial1.stimulus = 'trimmed_mp3/' + trial_track + '.mp3'
-          trial1.question = '<p style="font-size:25px;">Which emotion does this music represent?</p>'
+          trial1.question = '<p style="font-size:25px;">Which emotion does this music mostly represent?</p>'
           trial1.prompt = 'Listen to the music...'
           trial1.data.difficulty = current_trial['Distance']
           trial1.data.correct_emotion = emotions[current_trial['Label1']-1]
