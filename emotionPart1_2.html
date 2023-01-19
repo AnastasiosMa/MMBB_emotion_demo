@@ -41,6 +41,7 @@
       var current_emotion = []
       var excerpt_names = []
       var N = 16
+      var N_part2 = 12
       var candidate_trial = []
       var correct_response = []
       var trial_images = []
@@ -109,7 +110,7 @@
       },
         on_finish: function(data){
           // Score the response as correct or incorrect.
-          jsPsych.setProgressBar((epoch+1)/N)
+          jsPsych.setProgressBar((epoch+1)/(N+N_part2))
           if(data.response == trial_images.findIndex(element => element == current_trial['Label1'])){
             correct_response = 1;
             trial1.data.correct_response = 1;
@@ -206,12 +207,13 @@
     labels: [['Strongly dislike','Neutral','Strongly like'],['Very unfamiliar','Very familiar']],
     on_finish: function(part2_other_scales){
       epochPart2 = epochPart2+1
+      jsPsych.setProgressBar((epoch+epochPart2)/(N+N_part2))
     }
     };
 
     var part2_trials = {
         timeline: [part2_audio,part2_emotion_scales,part2_other_scales],
-        repetitions: 12
+        repetitions: N_part2
       }
     
     var the_end = {
