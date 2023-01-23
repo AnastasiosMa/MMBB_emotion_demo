@@ -7,6 +7,8 @@ for i = 1:length(ratings)
     [sorted,k] = sort(ratings(i,:),'descend');
     [target_emotion,target_label_idx] = max(ratings(i,:));
     dists = target_emotion - sorted(2:end);
+    totaldists(i) = mean(dists);
+    emo_categoty(i) = target_label_idx;
     for j = 1:3
     dist_ratings([i-1]*3+j).Label = strjoin([emo_labels(target_label_idx),emo_labels(k(1+j))]); 
     dist_ratings([i-1]*3+j).Name = data{i,'Number'};
@@ -43,3 +45,20 @@ end
 legend(emo_labels),xlabel('Trials'),ylabel('Distance')
 hold off
 writetable(trials,'trials.csv')
+
+%%find excerpts for part 2
+figure,plot(sort(totaldists)), xlabel('Trials'),ylabel('Distance'), title('Part2 distances')
+low = prctile(totaldists,25);
+mid = prctile(totaldists,50);
+high = prctile(totaldists,75);
+
+for i=1:4
+    idx = find(emo_categoty==i);
+    [~,tmp]=min(abs(totaldists(idx)-low));
+    excerpt(i,1) = idx(tmp);
+    [~,tmp]=min(abs(totaldists(idx)-mid));
+    excerpt(i,2) = idx(tmp);
+    [~,tmp]=min(abs(totaldists(idx)-high));
+    excerpt(i,3) = idx(tmp);
+end
+writematrix(excerpt,'Part2excerpts.csv')
