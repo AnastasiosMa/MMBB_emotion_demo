@@ -9,7 +9,7 @@ timestamp = now.strftime("%Y%m%d%H%M%S")
 CSV_FILEPATH = "assets/trials.csv"
 JSON_OUTPUTFILE = "assets/trials_" + timestamp + ".json"
 EXPECTED_COLUMN_NAMES = ['Label','Name','TargetEmo','ComparisonEmo','Distance','Label1','Label2',
-                         'Soundtrack','Level']
+                         'Soundtrack','Level','Trials']
 
 
 trials = {}
