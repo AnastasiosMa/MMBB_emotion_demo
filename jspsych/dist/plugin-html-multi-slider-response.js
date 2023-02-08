@@ -1,8 +1,8 @@
-var jsPsychHtmlSliderResponse = (function (jspsych) {
+var jsPsychHtmlMultiSliderResponse = (function (jspsych) {
   'use strict';
 
   const info = {
-      name: "html-slider-response",
+      name: "html-multi-slider-response",
       parameters: {
           /** The HTML string to be displayed */
           stimulus: {
@@ -14,20 +14,26 @@ var jsPsychHtmlSliderResponse = (function (jspsych) {
           min: {
               type: jspsych.ParameterType.INT,
               pretty_name: "Min slider",
-              default: 0,
+              default: 1,
           },
           /** Sets the maximum value of the slider */
           max: {
               type: jspsych.ParameterType.INT,
               pretty_name: "Max slider",
-              default: 100,
+              default: 9,
           },
+          
           /** Sets the starting value of the slider */
           slider_start: {
               type: jspsych.ParameterType.INT,
               pretty_name: "Slider starting value",
-              default: 50,
+              default: 5,
           },
+          nSliders: {
+            type: jspsych.ParameterType.INT,
+            pretty_name: "Slider number",
+            default: 1,
+        },
           /** Sets the step of the slider */
           step: {
               type: jspsych.ParameterType.INT,
@@ -87,14 +93,14 @@ var jsPsychHtmlSliderResponse = (function (jspsych) {
       },
   };
   /**
-   * **html-slider-response**
+   * **html-multi-slider-response**
    *
-   * jsPsych plugin for showing an HTML stimulus and collecting a slider response
+   * jsPsych plugin for showing an HTML stimulus and collecting multiple slider responses
    *
    * @author Josh de Leeuw
    * @see {@link https://www.jspsych.org/plugins/jspsych-html-slider-response/ html-slider-response plugin documentation on jspsych.org}
    */
-  class HtmlSliderResponsePlugin {
+  class HtmlMultiSliderResponsePlugin {
       constructor(jsPsych) {
           this.jsPsych = jsPsych;
       }
@@ -102,7 +108,11 @@ var jsPsychHtmlSliderResponse = (function (jspsych) {
           // half of the thumb width value from jspsych.css, used to adjust the label positions
           var half_thumb_width = 7.5;
           var html = '<div id="jspsych-html-slider-response-wrapper" style="margin: 100px 0px;">';
-          html += '<div id="jspsych-html-slider-response-stimulus">' + trial.stimulus + "</div>";
+          if (trial.prompt !== null) {
+            html += trial.prompt;
+        }
+          for (var k = 0; k < trial.nSliders; k++) {
+          html += '<div id="jspsych-html-slider-response-stimulus">' + trial.stimulus[k] + "</div>";
           html +=
               '<div class="jspsych-html-slider-response-container" style="position:relative; margin: 0 auto 3em auto; ';
           if (trial.slider_width !== null) {
@@ -112,6 +122,7 @@ var jsPsychHtmlSliderResponse = (function (jspsych) {
               html += "width:auto;";
           }
           html += '">';
+
           html +=
               '<input type="range" class="jspsych-slider" value="' +
                   trial.slider_start +
@@ -121,15 +132,15 @@ var jsPsychHtmlSliderResponse = (function (jspsych) {
                   trial.max +
                   '" step="' +
                   trial.step +
-                  '" id="jspsych-html-slider-response-response"></input>';
-          html += "<div id='labelsWrapper'>";
-          for (var j = 0; j < trial.labels.length; j++) {
-              var label_width_perc = 100 / (trial.labels.length - 1);
-              var percent_of_range = j * (100 / (trial.labels.length - 1));
+                  '" id="jspsych-html-slider-response-response-' + k.toString() + '"></input>';
+          html += "<div>";
+          for (var j = 0; j < trial.labels[k].length; j++) {
+              var label_width_perc = 100 / (trial.labels[k].length - 1);
+              var percent_of_range = j * (100 / (trial.labels[k].length - 1));
               var percent_dist_from_center = ((percent_of_range - 50) / 50) * 100;
               var offset = (percent_dist_from_center * half_thumb_width) / 100;
               html +=
-                  '<div id="label' + j + '" style="border: 1px solid transparent; display: inline-block; position: absolute; ' +
+                  '<div style="border: 1px solid transparent; display: inline-block; position: absolute; ' +
                       "left:calc(" +
                       percent_of_range +
                       "% - (" +
@@ -138,16 +149,14 @@ var jsPsychHtmlSliderResponse = (function (jspsych) {
                       offset +
                       "px); text-align: center; width: " +
                       label_width_perc +
-                      '%;">';
-              html += '<span id="extremetySlider" style="text-align: center; font-size: 80%;">' + trial.labels[j] + "</span>";
+                      '%; ">';
+              html += '<span style="text-align: center; font-size: 80%;">' + trial.labels[k][j] + "</span>";
               html += "</div>";
           }
           html += "</div>";
           html += "</div>";
+        }
           html += "</div>";
-          if (trial.prompt !== null) {
-              html += trial.prompt;
-          }
           // add submit button
           html +=
               '<button id="jspsych-html-slider-response-next" class="jspsych-btn" ' +
@@ -164,26 +173,17 @@ var jsPsychHtmlSliderResponse = (function (jspsych) {
               const enable_button = () => {
                   display_element.querySelector("#jspsych-html-slider-response-next").disabled = false;
               };
+              for (var k = 0; k < trial.nSliders; k++) {
               display_element
-                  .querySelector("#jspsych-html-slider-response-response")
+                  .querySelector("#jspsych-html-slider-response-response-" + k.toString())
                   .addEventListener("mousedown", enable_button);
               display_element
-                  .querySelector("#jspsych-html-slider-response-response")
+                  .querySelector("#jspsych-html-slider-response-response-" + k.toString())
                   .addEventListener("touchstart", enable_button);
               display_element
-                  .querySelector("#jspsych-html-slider-response-response")
+                  .querySelector("#jspsych-html-slider-response-response-" + k.toString())
                   .addEventListener("change", enable_button);
-              display_element
-                  .querySelector("#jspsych-html-slider-response-response")
-                  .addEventListener("input", () => {
-                    try{
-                      var positionSlider = display_element.querySelector("#jspsych-html-slider-response-response").value
-                      document.getElementById("showAge").innerHTML = positionSlider
-                    }
-                    catch{
-                      console.log("Not this trial")
-                    }
-                  })
+              }
           }
           const end_trial = () => {
               this.jsPsych.pluginAPI.clearAllTimeouts();
@@ -204,7 +204,10 @@ var jsPsychHtmlSliderResponse = (function (jspsych) {
               // measure response time
               var endTime = performance.now();
               response.rt = Math.round(endTime - startTime);
-              response.response = display_element.querySelector("#jspsych-html-slider-response-response").valueAsNumber;
+              response.response = []
+              for (var k = 0; k < trial.nSliders; k++) {
+                response.response[k] = display_element.querySelector("#jspsych-html-slider-response-response-" + k.toString()).valueAsNumber;
+              }
               if (trial.response_ends_trial) {
                   end_trial();
               }
@@ -262,8 +265,8 @@ var jsPsychHtmlSliderResponse = (function (jspsych) {
           }
       }
   }
-  HtmlSliderResponsePlugin.info = info;
+  HtmlMultiSliderResponsePlugin.info = info;
 
-  return HtmlSliderResponsePlugin;
+  return HtmlMultiSliderResponsePlugin;
 
 })(jsPsychModule);
