@@ -5,7 +5,7 @@
     <script src="./jspsych/dist/graphFunction.js"> </script>
     <script src="./jspsych/dist/jspsych.js"></script>
     <script src="./jspsych/dist/plugin-instructions.js"> </script>
-    <script src="./jspsych/dist/plugin-html-slider-response.js"> </script>
+    <script src="./jspsych/dist/plugin-html-multi-slider-response.js"> </script>
     <script src="./jspsych/dist/plugin-audio-keyboard-response.js"></script>
     <script src="./jspsych/dist/plugin-html-button-response.js"> </script>
     <script src="./jspsych/dist/plugin-emotion-audio-button-response.js"> </script>
@@ -176,7 +176,7 @@
       }
 
     //PART2
-    var stim_dur = 8500
+    var stim_dur = 8200
     var part2_excerpts = ['091','010','093','026','077','055','037','078','088','052','028','041']
     var part2_excerpt_order = jsPsych.randomization.repeat(part2_excerpts,1)
     var epochPart2 = 0
@@ -212,7 +212,7 @@
     }
 
     var part2_emotion_scales = {
-    type: jsPsychHtmlSliderResponse,
+    type: jsPsychHtmlMultiSliderResponse,
     stimulus: ['Mood', 'Energy', 'How strong are the emotions expressed by the music?'],
     nSliders: 3,
     require_movement: true,
@@ -222,7 +222,7 @@
     };
     
     var part2_other_scales = {
-    type: jsPsychHtmlSliderResponse,
+    type: jsPsychHtmlMultiSliderResponse,
     stimulus: ['How much did you like/dislike the music?','How familiar did the music sound to you?'],
     nSliders: 2,
     require_movement: true,
@@ -247,6 +247,7 @@
       }  
 
     jsPsych.run([instruction, test,part1_trials, instruction3, instruction4, part2_trials,the_end]);
+    //jsPsych.run([instruction3, instruction4, part2_trials,the_end]);
 
 
  </script>
