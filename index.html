@@ -61,10 +61,10 @@
       //trials 
       var instruction = {
           type: jsPsychInstructions,
-          pages: ['<p style="font-size:6vw;">Emotion Battery.</p>','<p style="font-size:30px;">Instructions</p>'+'<br>In this section, you will listen to short music'+
+          pages: ['<p style="font-size:6vw;">Emotion Battery</p>','<p style="font-size:30px;">Instructions</p>'+'<br>In this section, you will listen to short music'+
         ' tracks and asked to choose the emotion it mostly represents. The emotions in question are <strong>happy, sad, tender, </strong> and <strong>angry.</strong>'+
-        ' Listen to the music track first and then make your choice.', '<p style="font-size:30px;">Trial</p>'+'<br>' +
-        'You will now be presented with a trial to get familiar with the task. Your response will not be used in the analysis. Please also adjust the volume to a comfortable level. '],
+        ' Listen to the music track first and then make your choice.', '<p style="font-size:30px;"> Practice Trial</p>'+'<br>' +
+        'You will now be presented with a trial to get familiar with the task. Your response will not be used in the analysis. <br>Please also adjust the volume to a comfortable level. '],
           button_label_next: "Next",
           button_label_previous: "Previous",
           show_clickable_nav: true
@@ -104,7 +104,7 @@
             trial_track = '0' + trial_track
           }
           trial1.stimulus = 'part1_adaptive/trimmed_mp3/' + trial_track + '.mp3'
-          trial1.question = '<p style="font-size:25px;">Which emotion does this music mostly represent?</p>'
+          trial1.question = '<p style="font-size:25px;">Which of these two emotions does the music better represent?</p>'
           trial1.prompt = 'Listen to the music...'
           trial1.data.difficulty = current_trial['Distance']
           trial1.data.correct_emotion = emotions[current_trial['Label1']-1]
