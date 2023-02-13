@@ -4,6 +4,7 @@
     <title>MMBB batery</title>
     <script src="./jspsych/dist/graphFunction.js"> </script>
     <script src="./jspsych/dist/jspsych.js"></script>
+    <script src="./jspsych/dist/plugin-preload.js"> </script>
     <script src="./jspsych/dist/plugin-instructions.js"> </script>
     <script src="./jspsych/dist/plugin-html-multi-slider-response.js"> </script>
     <script src="./jspsych/dist/plugin-audio-keyboard-response.js"></script>
@@ -24,7 +25,6 @@
           jsPsych.data.get().localSave('csv','dataEmotion.csv');
           //jatos.endStudy(jsPsych.data.get().json())
     }});
-    
     //PART1
     var images = [
       { img: "./basic_emoji/v1a5.png",  type: 'Anger'},
@@ -32,6 +32,11 @@
       { img: "./basic_emoji/v1a1.png",  type: 'Sad'},
       { img: "./basic_emoji/v5a1.png",  type: 'Tender'}
     ];
+    
+    var preload = {
+    type: jsPsychPreload,
+    auto_preload: true 
+    }
     
       var emotions = ['angry','happy','sad','tender']
       var emotions_numeric = [1,2,3,4]
@@ -67,6 +72,7 @@
         'You will now be presented with a trial to get familiar with the task. Your response will not be used in the analysis. <br>Please also adjust the volume to a comfortable level. '],
           button_label_next: "Next",
           button_label_previous: "Previous",
+          allow_backward: true,
           show_clickable_nav: true
       }
       var test_ending = {
@@ -74,6 +80,7 @@
           pages: ['Thank you for your response! The trial is over, you can now start by clicking "Next"'],
           button_label_next: "Next",
           show_clickable_nav: true,
+          allow_backward: true,
           on_start: function(test_ending){
             current_level = 2
             epoch = 0

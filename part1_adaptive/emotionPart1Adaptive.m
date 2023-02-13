@@ -44,7 +44,7 @@ for i = 1:4
 end
 legend(emo_labels),xlabel('Trials'),ylabel('Distance')
 hold off
-writetable(trials,'trials.csv')
+%writetable(trials,'trials.csv')
 
 %%find excerpts for part 2
 figure,plot(sort(totaldists)), xlabel('Trials'),ylabel('Distance'), title('Part2 distances')
@@ -61,4 +61,4 @@ for i=1:4
     [~,tmp]=min(abs(totaldists(idx)-high));
     excerpt(i,3) = idx(tmp);
 end
-writematrix(excerpt,'Part2excerpts.csv')
+%writematrix(excerpt,'Part2excerpts.csv')
