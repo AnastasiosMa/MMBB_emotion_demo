@@ -6,6 +6,7 @@
     <script src="./jspsych/dist/plugin-preload.js"> </script>
     <script src="./jspsych/dist/plugin-instructions.js"></script>
     <script src="./jspsych/dist/plugin-audio-keyboard-response.js"></script>
+    <script src="./jspsych/dist/plugin-instructions-timedout.js"></script>
     <script src="./jspsych/dist/plugin-html-multi-slider-response.js"></script>
     <script src="./jspsych/dist/plugin-emotion-audio-button-response.js"> </script>
     <script src="./part1_adaptive/data/trials.js"> </script>
@@ -62,9 +63,17 @@
       excerpt_order.push(jsPsych.randomization.sampleWithoutReplacement([0,1],2))
     }
     //trials 
-    var instruction = {
+    var welcomePart1 = {
       type: jsPsychInstructions,
-      pages: ['<p style="font-size:6vw;">Emotion Battery</p>','<p style="font-size:30px;">Instructions</p>'+'<br>In this section, you will listen to short music'+
+      pages: ['<p style="font-size:40px;">Music and Emotion Survey</p>'],
+      button_label_next: "Next",
+      button_label_previous: "Previous",
+      allow_backward: false,
+      show_clickable_nav: true
+    }
+    var instructionsPart1 = {
+      type: jsPsychInstructions,
+      pages: ['<p style="font-size:30px;">Instructions</p>'+'<br>In this section, you will listen to short music'+
       ' tracks and asked to choose the emotion it mostly represents. The emotions in question are <strong>happy, sad, tender, </strong> and <strong>angry.</strong>'+
       ' Listen to the music track first and then make your choice.', '<p style="font-size:30px;"> Practice Trial</p>'+'<br>' +
       'You will now be presented with a trial to get familiar with the task. Your response will not be used in the analysis. <br>Please also adjust the volume to a comfortable level. '],
@@ -75,10 +84,10 @@
     }
     var test_ending = {
       type: jsPsychInstructions,
-      pages: ['Thank you for your response! The trial is over, you can now start by clicking "Next"'],
+      pages: ['Thank you for your response!<br><br>The trial is over, you can start the task by clicking "Next"'],
       button_label_next: "Next",
       show_clickable_nav: true,
-      allow_backward: true,
+      allow_backward: false,
       on_start: function(test_ending){
         current_level = 2
         epoch = 0
@@ -184,24 +193,24 @@
     var part2_excerpts = ['091','010','093','026','077','055','037','078','088','052','028','041']
     var part2_excerpt_order = jsPsych.randomization.repeat(part2_excerpts,1)
     var epochPart2 = 0
-    var instruction3 = {
-        type: jsPsychInstructions,
-        pages: [
-        '<p style="font-size:7vw;">Emotion task Part 2</p>',
-        ],
-        button_label_next: "Next",
-        button_label_previous: "Previous",
-        show_clickable_nav: true
-    }
 
-    var instruction4 = {
-        type: jsPsychInstructions,
-        pages: [
-        '<p style="font-size:30px;">Please rate the emotional content of the music</p>',
-        ],
-        button_label_next: "Next",
-        button_label_previous: "Previous",
-        show_clickable_nav: true
+    var welcomePart2 = {
+      type: jsPsychInstructions,
+      pages: ['<p style="font-size:6vw;">Music and Emotion Part 2</p>'],
+      button_label_next: "Next",
+      button_label_previous: "Previous",
+      allow_backward: false,
+      show_clickable_nav: true
+    }
+    var instructionsPart2 = {
+      type: jsPsychInstructions,
+      pages: ['<p style="font-size:30px;">Instructions</p>'+'<br>In this section, you will listen to a short music'+
+      ' track and asked to rate the emotional content of the music. These ratings refer to the mood, energy and intensity of emotions expressed by the music'+
+      '<br>You can start the survey by clicking "Next"'],
+      button_label_next: "Next",
+      button_label_previous: "Previous",
+      allow_backward: true,
+      show_clickable_nav: true
     }
 
     var part2_audio = {
@@ -250,7 +259,7 @@
         show_clickable_nav: true,
       }  
 
-    jsPsych.run([instruction, preload,test ,part1_trials, instruction3, instruction4, part2_trials,the_end]);
+    jsPsych.run([welcomePart1,instructionsPart1, preload,test ,part1_trials, welcomePart2, instructionsPart2, part2_trials,the_end]);
     //jsPsych.run([instruction3, instruction4, part2_trials,the_end]);
 
 
