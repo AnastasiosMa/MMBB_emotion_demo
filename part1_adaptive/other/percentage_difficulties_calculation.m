@@ -16,6 +16,8 @@ for i = 1:110
     [sorted,sorted_labels] = sort(mean_excerpt_values(i,:),'descend');
     [target_emotion,target_label_idx] = max(mean_excerpt_values(i,:));
     dists = target_emotion - sorted(2:end);
+    totaldists(i) = mean(dists);
+    emo_categoty(i) = target_label_idx;
     for j = 1:3
         difficulty = sum(excerpt_data{:,emo_idxs(sorted_labels(1))}>...
             excerpt_data{:,emo_idxs(sorted_labels(1+j))})/height(excerpt_data);
@@ -42,7 +44,17 @@ dist_ratings = sortrows(dist_ratings,'Ttest','descend');
 p = prctile(dist_ratings.TargetEmo,12);
 idx = find(dist_ratings.TargetEmo>p);
 dist_ratings = dist_ratings(idx,:);
+%remove duplicate excerpts
+[~,unique_excerpts] = unique(mean_scores{:,'IndexInSet1'});
+unique_excerpts = sort(unique_excerpts);
+excerpts_to_remove = [17,67,72,75,82,86,95,101];
+idx = [];
+for i =1:height(dist_ratings)
+    idx(i) = ~sum(dist_ratings.Name(i)==excerpts_to_remove);
+end
+dist_ratings = dist_ratings(find(idx),:);
 
+%create levels for each emotion separately
 for k = 1:4
     cell_trials{k} = dist_ratings(find(dist_ratings.Label1 == k),:);
     levelLength = height(cell_trials{k})/16;
@@ -57,9 +69,6 @@ end
 trials = sortrows(trials,'Ttest','descend');
 
 trials.Distance = trials.Ttest;
-trials = removevars(trials,["Ttest","Difficulty","DifficultyInverted"]);
-trials{:,'Trials'} = [1:height(trials)]';
-%writetable(trials,'trials.csv')
 
 %figure,plot(sort(dist_ratings{:,'Distance'})), xlabel('Trials'),ylabel('Distance')
 figure
@@ -105,6 +114,27 @@ scatter(trials.Difficulty,trials.Ttest)
 xlabel('Percentage (percentage of true answer being higher)')
 ylabel('Tstatistic')
 title(['Scatterplot between Percentage and Ttest: r = ', num2str(round(rho,2))])
+
+trials = removevars(trials,["Ttest","Difficulty","DifficultyInverted"]);
+trials{:,'Trials'} = [1:height(trials)]';
+%writetable(trials,'trials.csv')
+
+%%find excerpts for part 2
+figure,plot(sort(totaldists)), xlabel('Trials'),ylabel('Distance'), title('Part2 distances')
+low = prctile(totaldists,25);
+mid = prctile(totaldists,50);
+high = prctile(totaldists,75);
+
+for i=1:4
+    idx = find(emo_categoty==i);
+    [~,tmp]=min(abs(totaldists(idx)-low));
+    excerpt(i,1) = idx(tmp);
+    [~,tmp]=min(abs(totaldists(idx)-mid));
+    excerpt(i,2) = idx(tmp);
+    [~,tmp]=min(abs(totaldists(idx)-high));
+    excerpt(i,3) = idx(tmp);
+end
+%writematrix(excerpt,'Part2excerpts.csv')
 
 
 
