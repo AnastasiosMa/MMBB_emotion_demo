@@ -52,6 +52,7 @@
     var correct_response = []
     var trial_images = []
     var excerpt_history = []
+    var emotion_game_trials = 1
 
     var emotion_order = []
     for (let i=0;i<N/emotions_numeric.length;i++) {
@@ -191,6 +192,22 @@
       timeline: [trial1, test_ending]
     }
 
+    var task_repeat = {
+      type: jsPsychInstructions,
+      pages: ['Thank you for your responses! <br>The emotion game will now be repeated.'],
+      button_label_next: "Next",
+      show_clickable_nav: true,
+      on_start: function(data){
+        epoch = 0
+        current_level = 2
+        emotion_game_trials = 2
+        for (let i=0;i<N/emotions_numeric.length;i++) {
+        emotion_order = emotion_order.concat(jsPsych.randomization.sampleWithoutReplacement(emotions_numeric,emotions_numeric.length))
+        }
+        for (let i=0;i<N;i++) {
+        excerpt_order.push(jsPsych.randomization.sampleWithoutReplacement([0,1],2))
+    }}}  
+
     //PART2
     var stim_dur = 8200
     var part2_excerpts = ['091','010','093','026','077','055','037','078','088','052','028','041']
@@ -262,7 +279,7 @@
         show_clickable_nav: true,
       }  
 
-    jsPsych.run([welcomePart1,instructionsPart1, preload,test ,part1_trials, welcomePart2, instructionsPart2, part2_trials,the_end]);
+    jsPsych.run([welcomePart1,instructionsPart1, preload,test ,part1_trials, task_repeat,part1_trials]);//welcomePart2, instructionsPart2, part2_trials,the_end]);
     //jsPsych.run([instruction3, instruction4, part2_trials,the_end]);
 
 
