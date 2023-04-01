@@ -53,6 +53,8 @@
     var trial_images = []
     var excerpt_history = []
     var emotion_game_trials = 1
+    var excerpts_played = []
+    var unique_excerpts = []
 
     var emotion_order = []
     for (let i=0;i<N/emotions_numeric.length;i++) {
@@ -118,7 +120,15 @@
       on_start: function(trial1){ 
         current_emotion = emotions[emotion_order[epoch]-1]
         candidate_trial = trials[String(current_level)][String(emotion_order[epoch])]
+        for (let i=0;i<candidate_trial.length;i++) {
+        unique_excerpts[i] = candidate_trial[i]['Name']
+        }
+        unique_excerpts = unique_excerpts.filter(x => !excerpts_played.includes(x))
         current_trial = jsPsych.randomization.sampleWithoutReplacement(candidate_trial,1)[0]
+        while (excerpts_played.includes(current_trial['Name'])){
+          current_trial = jsPsych.randomization.sampleWithoutReplacement(candidate_trial,1)[0]
+        }
+        excerpts_played[epoch] = current_trial['Name']
         console.log(current_trial)
         excerpt_history[epoch] = current_trial['Label1'] 
         excerpt_names = [current_trial['Name']]
