@@ -92,7 +92,7 @@
       show_clickable_nav: true,
       allow_backward: false,
       on_start: function(test_ending){
-        current_level = 2
+        current_level = 1
         epoch = 0
     }}
 
@@ -119,27 +119,33 @@
       data: {},
       on_start: function(trial1){ 
         current_emotion = emotions[emotion_order[epoch]-1]
-        candidate_trial = trials[String(current_level)][String(emotion_order[epoch])]
-        var unique_excerpts_idx = []
-        for (let i=0;i<candidate_trial.length;i++) {
-        if (!excerpts_played.includes(candidate_trial[i]['Name'])){
-          unique_excerpts_idx.push(i)
+        var level_trials = trials[String(current_level)][String(emotion_order[epoch])]
+        candidate_trial = []
+        for (let i=0;i<level_trials.length;i++) {
+        if (!excerpts_played.includes(level_trials[i]['Name'])){
+          candidate_trial.push(level_trials[i])
         }}
-        if (unique_excerpts_idx.length > 0){
-        current_trial = jsPsych.randomization.sampleWithoutReplacement(candidate_trial[unique_excerpts_idx],1)[0]
+        if (candidate_trial.length < 0){
+          console.log('Candidates more than 0')
+          console.log(candidate_trial)  
+          current_trial = jsPsych.randomization.sampleWithoutReplacement(candidate_trial,1)[0]
         }
         else {
-          var level_trials = trials[String(current_level)]
           candidate_trial = []
-          for (let i=0;i<4;i++) {
+          console.log('Candidates less than 0')
+          level_trials = trials[String(current_level)]
+          console.log(level_trials)
+          for (let i=1;i<5;i++) {
             for (let k=0;k<level_trials[i].length;k++) {
-              if (!excerpts_played.includes(level_trials[k]['Name'])){
-                unique_excerpts_idx.push(k)}}
-            candidate_trial.push(level_trials[i][unique_excerpts_idx])}
+              if (!excerpts_played.includes(level_trials[i][k]['Name'])){
+                candidate_trial.push(level_trials[i][k])
+          }}}
+          console.log(candidate_trial)
           if (candidate_trial.length > 0){
             current_trial = jsPsych.randomization.sampleWithoutReplacement(candidate_trial,1)[0]
-        } 
+          } 
           else {
+            console.log('Timeline to be stopped')
             jsPsych.endCurrentTimeline();
           }}
         //while (excerpts_played.includes(current_trial['Name'])){
@@ -226,7 +232,7 @@
       show_clickable_nav: true,
       on_start: function(data){
         epoch = 0
-        current_level = 2
+        current_level = 1
         emotion_game_trials = 2
         for (let i=0;i<N/emotions_numeric.length;i++) {
         emotion_order = emotion_order.concat(jsPsych.randomization.sampleWithoutReplacement(emotions_numeric,emotions_numeric.length))
