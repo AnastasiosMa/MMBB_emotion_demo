@@ -11,31 +11,31 @@
 
     <script src="https://unpkg.com/jspsych@7.1.2"></script>
 
-    <script src="/jspsych/dist/custom/utils.js"> </script>
+    <script src="./jspsych/dist/custom/utils.js"> </script>
 
-    <script src="/jspsych/dist/plugin-preload.js"> </script>
-    <script src="jspsych/dist/plugin-audio-button-response.js"></script>
-    <script src="jspsych/dist/plugin-html-button-response.js"></script>
-    <script src="/jspsych/dist/plugin-html-slider-response.js"></script>
-    <script src="/jspsych/dist/plugin-instructions.js"></script>
-    <script src="/jspsych/dist/plugin-audio-keyboard-response.js"></script>
-    <script src="/jspsych/dist/plugin-instructions-timedout.js"></script>
-    <script src="/jspsych/dist/plugin-html-multi-slider-response.js"></script>
-    <script src="/jspsych/dist/plugin-emotion-audio-button-response.js"> </script>
-    <script src="/jspsych/dist/plugin-survey.js"></script>
+    <script src="./jspsych/dist/plugin-preload.js"> </script>
+    <script src="./jspsych/dist/plugin-audio-button-response.js"></script>
+    <script src="./jspsych/dist/plugin-html-button-response.js"></script>
+    <script src="./jspsych/dist/plugin-html-slider-response.js"></script>
+    <script src="./jspsych/dist/plugin-instructions.js"></script>
+    <script src="./jspsych/dist/plugin-audio-keyboard-response.js"></script>
+    <script src="./jspsych/dist/plugin-instructions-timedout.js"></script>
+    <script src="./jspsych/dist/plugin-html-multi-slider-response.js"></script>
+    <script src="./jspsych/dist/plugin-emotion-audio-button-response.js"> </script>
+    <script src="./jspsych/dist/plugin-survey.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@jspsych/plugin-survey@0.2.1/css/survey.css">
 
-    <script src="/src/utils/langFetch.js"></script>
-    <script src="/src/utils/translations.js"></script>
-    <script src="/src/batteries/generalIntro.js"></script>
-    <script src="/src/utils/preventRefresh.js"> </script>
-    <script src="/src/utils/identifyOS.js"> </script>
-    <script src="/src/utils/manageCookies.js"> </script>
+    <script src="./src/utils/langFetch.js"></script>
+    <script src="./src/utils/translations.js"></script>
+    <script src="./src/batteries/generalIntro.js"></script>
+    <script src="./src/utils/preventRefresh.js"> </script>
+    <script src="./src/utils/identifyOS.js"> </script>
+    <script src="./src/utils/manageCookies.js"> </script>
 
 
     <link rel="stylesheet" href="https://unpkg.com/jspsych@7.1.2/css/jspsych.css">
 
-    <link rel="stylesheet" href="/src/styles/generalCSS.css">
+    <link rel="stylesheet" href="./src/styles/generalCSS.css">
 
 
 
@@ -84,15 +84,15 @@
 
     //PART1
     var images = [
-      { img: "../../images/emotion/v1a5.png",  type: emotionTranslations['angry'][lang]},
-      { img: "../../images/emotion/v5a5.png",  type: emotionTranslations['happy'][lang]},
-      { img: "../../images/emotion/v1a1.png",  type: emotionTranslations['sad'][lang]},
-      { img: "../../images/emotion/v5a1.png",  type: emotionTranslations['tender'][lang]}
+      { img: "./images/emotion/v1a5.png",  type: emotionTranslations['angry'][lang]},
+      { img: "./images/emotion/v5a5.png",  type: emotionTranslations['happy'][lang]},
+      { img: "./images/emotion/v1a1.png",  type: emotionTranslations['sad'][lang]},
+      { img: "./images/emotion/v5a1.png",  type: emotionTranslations['tender'][lang]}
     ];
     
     var preload = {
       type: jsPsychPreload,
-      images: ["../../images/emotion/v1a5.png", "../../images/emotion/v5a5.png","../../images/emotion/v1a1.png","../../images/emotion/v5a1.png"]
+      images: ["./images/emotion/v1a5.png", "./images/emotion/v5a5.png","./images/emotion/v1a1.png","./images/emotion/v5a1.png"]
     }
 
     var emotions = ['angry','happy','sad','tender']
@@ -152,11 +152,11 @@
 
     var trial_load_message = {
       type: jsPsychInstructionsTimedout,
-      pages: ["<img id='logoLoading' src='../../images/loading2.gif'>"],
+      pages: ["<img id='logoLoading' src='./images/loading2.gif'>"],
       show_clickable_nav: false,
       trial_duration: 2000, 
       on_start: function(trial_load_message){
-        trial_load_message.pages = ["<img id='logoLoading' src='../../images/loading2.gif'>"] 
+        trial_load_message.pages = ["<img id='logoLoading' src='./images/loading2.gif'>"] 
       }}      
 
     var trial1 = {
