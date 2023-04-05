@@ -317,6 +317,14 @@
       required: true
     }
 
+    var qHearingLoss = {
+      type: 'multi-choice',
+      prompt: emotionTranslations['hearingLoss'][lang], 
+      options: emotionTranslations['hearingOptions'].map(i => i[lang]),
+      name: 'hearingLoss', 
+      required: true
+    }
+
     var qFeedback = {
       type: 'text',
       prompt: emotionTranslations['feedbackAsk'][lang],
@@ -327,19 +335,9 @@
       required: false,
     }
 
-    var qNormalHearing = {
-      type: 'text',
-      prompt: emotionTranslations['feedbackAsk'][lang],
-      placeholder: emotionTranslations['feedbackPlaceHolder'][lang],
-      name: 'hearing', 
-      textbox_columns: 30,
-      textbox_rows: 7,
-      required: false,
-    }
-
     var demographics = {
       type: jsPsychSurvey,
-      pages: [[qAge], [qGender], [qNormalHearing], [qFeedback]],
+      pages: [[qAge], [qGender], [qHearingLoss], [qFeedback]],
       title: '',
       button_label_next: buttons[0][lang],
       button_label_back: buttons[1][lang],

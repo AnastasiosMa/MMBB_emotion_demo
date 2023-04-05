@@ -607,4 +607,25 @@ var emotionTranslations = {
       "eng": "prefer not to say"
     },
   ],
+  "hearingLoss":[
+    {
+      "fi": "",
+    "eng": "Do you have any hearing loss?"
+    }
+  ],
+  "hearingOptions": [
+    {
+      "fi": "",
+      "eng": "No hearing loss"
+    },
+    {
+      "fi": "",
+      "eng": "Mild hearing loss"
+    },
+    {
+      "fi": "",
+      "eng": "Moderate to severe hearing lossother"
+    }
+  ]
+
 }
