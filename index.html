@@ -113,7 +113,7 @@
     var emotion_game_trials = 1
     var excerpts_played = []
 
-    console.log('N = 5')
+    console.log('N = 6')
     var emotion_order = []
     for (let i=0;i<N/emotions_numeric.length;i++) {
       emotion_order = emotion_order.concat(jsPsych.randomization.sampleWithoutReplacement(emotions_numeric,emotions_numeric.length))
@@ -238,8 +238,8 @@
         jsPsych.setProgressBar((epoch+1)/N)
         if(data.response == trial_images.findIndex(element => element == current_trial['Label1'])){
           correct_response = 1;
-          trial1.data.correct_response = 1;
-          trial1.data.epoch = epoch;
+          data.correct_response = 1;
+          data.epoch = epoch;
           console.log(epoch)
           previous_level = current_level
           jump_level = Math.ceil((16 - current_level)/(1/difficulty_change))
@@ -247,8 +247,8 @@
         }   
         else {
           correct_response = 0;
-          trial1.data.correct_response = 0;
-          trial1.data.epoch = epoch;
+          data.correct_response = 0;
+          data.epoch = epoch;
           console.log(epoch)
           previous_level = current_level
           jump_level = Math.ceil((current_level)/(1/difficulty_change))
