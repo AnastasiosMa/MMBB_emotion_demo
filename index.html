@@ -113,11 +113,12 @@
     var emotion_game_trials = 1
     var excerpts_played = []
 
-    console.log('N = 4')
+    console.log('N = 5')
     var emotion_order = []
     for (let i=0;i<N/emotions_numeric.length;i++) {
       emotion_order = emotion_order.concat(jsPsych.randomization.sampleWithoutReplacement(emotions_numeric,emotions_numeric.length))
     }
+    console.log(emotion_order)
     var excerpt_order = []
     for (let i=0;i<N;i++) {
       excerpt_order.push(jsPsych.randomization.sampleWithoutReplacement([0,1],2))
@@ -277,6 +278,7 @@
         for (let i=0;i<N/emotions_numeric.length;i++) {
         emotion_order = emotion_order.concat(jsPsych.randomization.sampleWithoutReplacement(emotions_numeric,emotions_numeric.length))
         }
+        console.log(emotion_order)
         for (let i=0;i<N;i++) {
         excerpt_order.push(jsPsych.randomization.sampleWithoutReplacement([0,1],2))
     }}}  
