@@ -64,14 +64,21 @@ var jsPsychAudioKeyboardResponse = (function (jspsych) {
           // hold the .resolve() function from the Promise that ends the trial
           let trial_complete;
           // setup stimulus
-          var context = this.jsPsych.pluginAPI.audioContext();
+          window.context = this.jsPsych.pluginAPI.audioContext();
           // store response
           var response = {
               rt: null,
               key: null,
           };
           // record webaudio context start time
-          var startTime;
+          window.startTime;
+
+          var baseLatencyEnd;
+          var outputLatencyEnd;
+
+          var baseLatencyBegin;
+          var outputLatencyBegin;
+
           // load audio file
           this.jsPsych.pluginAPI
               .getAudioBuffer(trial.stimulus)
@@ -102,8 +109,12 @@ var jsPsychAudioKeyboardResponse = (function (jspsych) {
               }
               // start audio
               if (context !== null) {
-                  startTime = context.currentTime;
+                  window.startTime = context.currentTime;
                   this.audio.start(startTime);
+
+                  baseLatencyBegin = context.baseLatency;
+                  outputLatencyBegin = context.outputLatency;
+
               }
               else {
                   this.audio.play();
@@ -139,11 +150,21 @@ var jsPsychAudioKeyboardResponse = (function (jspsych) {
               this.audio.removeEventListener("ended", setup_keyboard_listener);
               // kill keyboard listeners
               this.jsPsych.pluginAPI.cancelAllKeyboardResponses();
+
+              //Get the latency of the audio in the end of the experiment
+              baseLatencyEnd = context.baseLatency;
+              outputLatencyEnd = context.outputLatency;
+
               // gather the data to store for the trial
               var trial_data = {
                   rt: response.rt,
+                  baseLatencyBegin: baseLatencyBegin,
+                  baseLatencyEnd: baseLatencyEnd,
+                  outputLatencyBegin: outputLatencyBegin,
+                  outputLatencyEnd: outputLatencyEnd,
                   stimulus: trial.stimulus,
                   response: response.key,
+                  contextStartTime: startTime,
               };
               // clear the display
               display_element.innerHTML = "";

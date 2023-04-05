@@ -164,8 +164,10 @@ var jsPsychPreload = (function (jspsych) {
           }
           if (trial.show_progress_bar) {
               html += `
-            <div id='jspsych-loading-progress-bar-container' style='height: 10px; width: 300px; background-color: #ddd; margin: auto;'>
-              <div id='jspsych-loading-progress-bar' style='height: 10px; width: 0%; background-color: #777;'></div>
+            <div id='jspsych-loading-progress-bar-container'>
+              <div id='jspsych-loading-progress-bar'>
+                <img id="logoLoading" src="../../images/loading2.gif">
+              </div>
             </div>`;
           }
           display_element.innerHTML = html;
@@ -175,7 +177,7 @@ var jsPsychPreload = (function (jspsych) {
                   var percent_loaded = (loaded / total_n) * 100;
                   var preload_progress_bar = display_element.querySelector("#jspsych-loading-progress-bar");
                   if (preload_progress_bar !== null) {
-                      preload_progress_bar.style.width = percent_loaded + "%";
+                    //preload_progress_bar.style.width = percent_loaded + "%";
                   }
               }
           };

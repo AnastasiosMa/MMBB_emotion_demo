@@ -20,7 +20,7 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
           button_html: {
               type: jspsych.ParameterType.HTML_STRING,
               pretty_name: "Button HTML",
-              default: '<button class="jspsych-tapping-btn" onclick="">%choice%</button>',
+              default: '<button class="jspsych-tapping-btn">%choice%</button>',
               array: true,
           },
           /** Any content here will be displayed below the stimulus. */
@@ -78,6 +78,7 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
    * @author Kristin Diep
    * @see {@link https://www.jspsych.org/plugins/jspsych-audio-button-response/ audio-button-response plugin documentation on jspsych.org}
    */
+
   class AudioButtonResponsePlugin {
       constructor(jsPsych) {
           this.jsPsych = jsPsych;
@@ -94,6 +95,13 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
           };
           // record webaudio context start time
           var startTime;
+
+          var baseLatencyEnd;
+          var outputLatencyEnd;
+
+          var baseLatencyBegin;
+          var outputLatencyBegin;
+
           // load audio file
           this.jsPsych.pluginAPI
               .getAudioBuffer(trial.stimulus)
@@ -140,7 +148,13 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
                       buttons.push(trial.button_html);
                   }
               }
-              var html = '<div id="jspsych-audio-button-response-btngroup">';
+              var html = "";
+              //show prompt if there is one
+              if (trial.prompt !== null) {
+                  html = trial.prompt;
+              }
+
+              html += '<div id="jspsych-audio-button-response-btngroup">';
               for (var i = 0; i < trial.choices.length; i++) {
                   var str = buttons[i].replace(/%choice%/g, trial.choices[i]);
                   html +=
@@ -157,10 +171,6 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
                           "</div>";
               }
               html += "</div>";
-              //show prompt if there is one
-              if (trial.prompt !== null) {
-                  html += trial.prompt;
-              }
               display_element.innerHTML = html;
               if (trial.response_allowed_while_playing) {
                   enable_buttons();
@@ -171,9 +181,13 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
               // start time
               startTime = performance.now();
               // start audio
+
               if (context !== null) {
                   startTime = context.currentTime;
                   this.audio.start(startTime);
+
+                  baseLatencyBegin = context.baseLatency;
+                  outputLatencyBegin = context.outputLatency;
               }
               else {
                   this.audio.play();
@@ -186,7 +200,8 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
               }
               on_load();
           };
-          var rts = []
+          var rts = [];
+          var rtsAudio = [];
           // function to handle responses by the subject
           function after_response(choice) {
               // measure rt
@@ -197,9 +212,10 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
                   rt = Math.round((endTime - startTime) * 1000);
               }
               response.button = parseInt(choice);
-              console.log(rts)
               rts.push(rt);
+              rtsAudio.push(context.currentTime - startTime);
               console.log(rts)
+              console.log(rtsAudio)
               // disable all the buttons after a response
               //disable_buttons();
               if (trial.response_ends_trial) {
@@ -221,11 +237,22 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
               this.audio.removeEventListener("ended", end_trial);
               this.audio.removeEventListener("ended", enable_buttons);
               // gather the data to store for the trial
+              
+              //Get the latency of the audio in the end of the experiment
+              baseLatencyEnd = context.baseLatency;
+              outputLatencyEnd = context.outputLatency;
+
               var trial_data = {
                   rt: rts,
+                  rtAudio: rtsAudio,
+                  baseLatencyBegin: baseLatencyBegin,
+                  baseLatencyEnd: baseLatencyEnd,
+                  outputLatencyBegin: outputLatencyBegin,
+                  outputLatencyEnd: outputLatencyEnd,
                   stimulus: trial.stimulus,
                   response: response.button,
               };
+
               // clear the display
               display_element.innerHTML = "";
               // move on to the next trial
@@ -243,7 +270,12 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
                   if (btn_el) {
                       btn_el.disabled = true;
                   }
-                  btns[i].removeEventListener("click", button_response);
+                  var mobile = mobileAndTabletCheck()
+                  if(mobile){
+                    btns[i].removeEventListener("touchend", button_response);
+                  } else {
+                    btns[i].removeEventListener("mousedown", button_response);
+                  }
               }
           }
           function enable_buttons() {
@@ -253,7 +285,12 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
                   if (btn_el) {
                       btn_el.disabled = false;
                   }
-                  btns[i].addEventListener("click", button_response);
+                  var mobile = mobileAndTabletCheck()
+                  if(mobile){
+                    btns[i].addEventListener('touchstart', button_response);
+                  } else {
+                    btns[i].addEventListener("mousedown", button_response);
+                  }
               }
           }
           return new Promise((resolve) => {

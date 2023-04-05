@@ -39,10 +39,12 @@ var jsPsychExtensionAccelerometer = (function () {
                   DeviceMotionEvent &&
                   typeof DeviceMotionEvent.requestPermission === "function"
                 ) {
-                  DeviceMotionEvent.requestPermission();
+                  DeviceMotionEvent.requestPermission().then(response => {
+                    console.log(response)
+                  });
                 }
                 params = params || {};
-                this.currentTrialData = [];
+                this.currentTrialData = [{x: [], y: [], z: [], t: [], timeAudio: [], gamma: [], alpha: [], beta: []}];
                 this.currentTrialTargets = new Map();
                 this.currentTrialSelectors = params.targets || [];
                 this.lastSampleTime = null;
@@ -68,6 +70,7 @@ var jsPsychExtensionAccelerometer = (function () {
                 };
             };
             this.accelEventHandler = (eventA) => {
+
                 const event_time = performance.now();
                 const t = Math.round(event_time - this.currentTrialStartTime);
 
@@ -75,10 +78,36 @@ var jsPsychExtensionAccelerometer = (function () {
                 var y = eventA.acceleration.y;
                 var z = eventA.acceleration.z;
 
+                var audioPlayed = window.context.currentTime - window.startTime
+
+                var rotationAlpha = eventA.rotationRate.alpha;
+                var rotationBeta = eventA.rotationRate.beta;
+                var rotationGama = eventA.rotationRate.gamma;
+
                 var interval = eventA.interval; //gets interval between samples in ms
 
                 this.lastSampleTime = event_time;
-                this.currentTrialData.push({ x, y, z, t, interval, event: "devicemotion" });
+                
+                this.currentTrialData[0]['x'].push(x);
+                this.currentTrialData[0]['y'].push(y);
+                this.currentTrialData[0]['z'].push(z);
+
+                this.currentTrialData[0]['timeAudio'].push(audioPlayed);
+              
+                //alpha
+                //The rate at which the device is rotating about its Z axis; that is, being twisted about a line perpendicular to the screen.
+
+                //beta
+                //The rate at which the device is rotating about its X axis; that is, front to back.
+
+                //gamma
+                //The rate at which the device is rotating about its Y axis; that is, side to side.
+
+                this.currentTrialData[0]['alpha'].push(rotationAlpha);
+                this.currentTrialData[0]['beta'].push(rotationBeta);
+                this.currentTrialData[0]['gamma'].push(rotationGama);
+
+                this.currentTrialData[0]['t'].push(t);
 
             };
             this.mutationObserverCallback = (mutationsList, observer) => {

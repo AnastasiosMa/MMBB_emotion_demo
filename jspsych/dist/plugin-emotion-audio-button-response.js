@@ -85,6 +85,11 @@ var jsPsychEmotionAudioButtonResponse = (function (jspsych) {
             pretty_name: "UpdateOnset",
             default: null,
         },
+          update_text_after_timeout: {
+            type: jspsych.ParameterType.STRING,
+            pretty_name: "UpdateOnsetAfter",
+            default: null,
+          },
       },
   };
   /**
@@ -123,6 +128,8 @@ var jsPsychEmotionAudioButtonResponse = (function (jspsych) {
               else {
                   this.audio = buffer;
                   this.audio.currentTime = 0;
+                  console.log(context)
+                  console.log(this.audio)
               }
               setupTrial();
 
@@ -206,7 +213,7 @@ var jsPsychEmotionAudioButtonResponse = (function (jspsych) {
 
               this.jsPsych.pluginAPI.setTimeout(() => {
                 //document.getElementById('id_prompt').innerHTML = ' '.repeat(trial.prompt.length)
-                document.getElementById('id_prompt').innerHTML = '  Choose'
+                document.getElementById('id_prompt').innerHTML = trial.update_text_after_timeout
                 document.getElementById('jspsych-audio-button-response-button-0').getElementsByTagName("img")[0].setAttribute('src',trial.update_choices[0].img)
                 document.getElementById('jspsych-audio-button-response-button-1').getElementsByTagName("img")[0].setAttribute('src',trial.update_choices[1].img)
                 document.getElementById('jspsych-audio-button-response-button-0').style.opacity = 1
@@ -262,23 +269,33 @@ var jsPsychEmotionAudioButtonResponse = (function (jspsych) {
               after_response(choice);
           }
           function disable_buttons() {
-              var btns = document.querySelectorAll(".jspsych-audio-button-response-button");
+              var btns = document.querySelectorAll(".jspsych-audio-button-response-button");
               for (var i = 0; i < btns.length; i++) {
                   var btn_el = btns[i].querySelector("button");
                   if (btn_el) {
                       btn_el.disabled = true;
                   }
-                  btns[i].removeEventListener("click", button_response);
+                  var mobile = mobileAndTabletCheck()
+                  if(mobile){
+                    btns[i].removeEventListener("touchend", button_response);
+                  } else {
+                    btns[i].removeEventListener("mousedown", button_response);
+                  }
               }
           }
           function enable_buttons() {
-              var btns = document.querySelectorAll(".jspsych-audio-button-response-button");
+              var btns = document.querySelectorAll(".jspsych-audio-button-response-button");
               for (var i = 0; i < btns.length; i++) {
                   var btn_el = btns[i].querySelector("button");
                   if (btn_el) {
                       btn_el.disabled = false;
                   }
-                  btns[i].addEventListener("click", button_response);
+                  var mobile = mobileAndTabletCheck()
+                  if(mobile){
+                    btns[i].addEventListener('touchstart', button_response);
+                  } else {
+                    btns[i].addEventListener("mousedown", button_response);
+                  }
               }
           }
           return new Promise((resolve) => {
