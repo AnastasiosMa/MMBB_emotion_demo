@@ -226,7 +226,7 @@
         trial1.data.difficulty = current_trial['Distance']
         trial1.data.correct_emotion = emotions[current_trial['Label1']-1]
         trial1.data.wrong_emotion = emotions[current_trial['Label2']-1]
-        trial1.data.trial_index = current_trial['Trials']
+        trial1.data.trial_num = current_trial['Trials']
         trial1.data.level = current_level
         trial1.choices = [images[trial_images[0]-1], images[trial_images[1]-1]]
         trial1.update_choices = [images[trial_images[0]-1], images[trial_images[1]-1]]
@@ -236,6 +236,7 @@
         if(data.response == trial_images.findIndex(element => element == current_trial['Label1'])){
           correct_response = 1;
           trial1.data.correct_response = 1;
+          trial1.data.epoch = epoch;
           previous_level = current_level
           jump_level = Math.ceil((16 - current_level)/(1/difficulty_change))
           current_level = current_level + jump_level
@@ -329,7 +330,7 @@
 
     var demographics = {
       type: jsPsychSurvey,
-      pages: [[qAge], [qGender], [qFeedback]],
+      pages: [[qAge], [qGender], [qNormalHearing], [qFeedback]],
       title: '',
       button_label_next: buttons[0][lang],
       button_label_back: buttons[1][lang],
