@@ -97,9 +97,10 @@ var howDifficult = {
     stimulus: recurring[9][lang],
     require_movement: false,
     labels: [recurring[10][lang], recurring[11][lang]],
+    slider_width: 250,
     on_load: function(){
-      document.getElementById("label0").style.fontSize = '24px'
-      document.getElementById("label1").style.fontSize = '24px'
+      document.getElementById("label0").style.fontSize = '20px'
+      document.getElementById("label1").style.fontSize = '20px'
     },
 };
 
