@@ -104,7 +104,7 @@
     var current_trial = []
     var current_emotion = []
     var excerpt_names = []
-    var N = 2
+    var N = 3
     var N_part2 = 12
     var candidate_trial = []
     var correct_response = []
@@ -113,7 +113,7 @@
     var emotion_game_trials = 1
     var excerpts_played = []
 
-    console.log('N = 2')
+    console.log('N = 3')
     var emotion_order = []
     for (let i=0;i<N/emotions_numeric.length;i++) {
       emotion_order = emotion_order.concat(jsPsych.randomization.sampleWithoutReplacement(emotions_numeric,emotions_numeric.length))
@@ -228,6 +228,7 @@
         trial1.data.wrong_emotion = emotions[current_trial['Label2']-1]
         trial1.data.trial_num = current_trial['Trials']
         trial1.data.level = current_level
+        trial1.data.emotion_game_repeat = emotion_game_trials
         trial1.choices = [images[trial_images[0]-1], images[trial_images[1]-1]]
         trial1.update_choices = [images[trial_images[0]-1], images[trial_images[1]-1]]
         },
