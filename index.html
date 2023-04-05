@@ -104,7 +104,7 @@
     var current_trial = []
     var current_emotion = []
     var excerpt_names = []
-    var N = 4
+    var N = 1
     var N_part2 = 12
     var candidate_trial = []
     var correct_response = []
@@ -113,7 +113,7 @@
     var emotion_game_trials = 1
     var excerpts_played = []
 
-    console.log('N = 7')
+    console.log('N = 8')
     var emotion_order = []
     for (let i=0;i<N/emotions_numeric.length;i++) {
       emotion_order = emotion_order.concat(jsPsych.randomization.sampleWithoutReplacement(emotions_numeric,emotions_numeric.length))

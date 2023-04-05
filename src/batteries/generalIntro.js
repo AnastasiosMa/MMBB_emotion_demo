@@ -98,8 +98,8 @@ var howDifficult = {
     require_movement: false,
     labels: [recurring[10][lang], recurring[11][lang]],
     on_load: function(){
-      document.getElementById("label0").style = ''
-      document.getElementById("label1").style = ''
+      document.getElementById("label0").fontSize = '24px'
+      document.getElementById("label1").fontSize = '24px'
     },
 };
 
