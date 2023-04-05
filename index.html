@@ -113,7 +113,7 @@
     var emotion_game_trials = 1
     var excerpts_played = []
 
-    console.log('N = 6')
+    console.log('N = 7')
     var emotion_order = []
     for (let i=0;i<N/emotions_numeric.length;i++) {
       emotion_order = emotion_order.concat(jsPsych.randomization.sampleWithoutReplacement(emotions_numeric,emotions_numeric.length))
@@ -321,7 +321,7 @@
       type: 'text',
       prompt: emotionTranslations['feedbackAsk'][lang],
       placeholder: emotionTranslations['feedbackPlaceHolder'][lang],
-      name: 'age', 
+      name: 'feedback', 
       textbox_columns: 30,
       textbox_rows: 7,
       required: false,
@@ -331,7 +331,7 @@
       type: 'text',
       prompt: emotionTranslations['feedbackAsk'][lang],
       placeholder: emotionTranslations['feedbackPlaceHolder'][lang],
-      name: 'age', 
+      name: 'hearing', 
       textbox_columns: 30,
       textbox_rows: 7,
       required: false,
@@ -426,7 +426,7 @@
       }  
 
     var procedureEmotionFinal = {
-        timeline: [welcomePart1, generalIntroEmotion, instructionsPart1, preload, test, part1_trials, task_repeat, part1_trials, messageFinishEmotion, demographics].flat(1000),
+        timeline: [welcomePart1, generalIntroEmotion, instructionsPart1, preload, test, part1_trials, task_repeat, part1_trials, messageFinishEmotion, howDifficult,demographics].flat(1000),
         on_timeline_start: function() {
           console.log('This timeline has started');
         }

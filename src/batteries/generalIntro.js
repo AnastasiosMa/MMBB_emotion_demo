@@ -1,7 +1,7 @@
 var preloadTest = {
     type: jsPsychPreload,
     audio: ['./songs/movementTapAudio/elPesebre.mp3'],
-    images: ['./images/muteButton.png'],
+    images: ['./images/muteButton.png','./images/loading2.gif'],
     auto_preload: false,
 }
 
