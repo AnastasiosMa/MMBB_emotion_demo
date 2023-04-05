@@ -592,19 +592,19 @@ var emotionTranslations = {
   "genderOptions": [
     {
       "fi": "nainen",
-      "eng": "female"
+      "eng": "Woman"
     },
     {
       "fi": "mies",
-      "eng": "male"
+      "eng": "Man"
     },
     {
       "fi": "joku muu",
-      "eng": "other"
+      "eng": "Other"
     },
     {
       "fi": "en halua kertoa",
-      "eng": "prefer not to say"
+      "eng": "Prefer not to say"
     },
   ],
   "hearingLoss":[
@@ -624,7 +624,7 @@ var emotionTranslations = {
     },
     {
       "fi": "",
-      "eng": "Moderate to severe hearing lossother"
+      "eng": "Moderate to severe hearing loss"
     }
   ]
 
