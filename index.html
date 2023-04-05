@@ -104,7 +104,7 @@
     var current_trial = []
     var current_emotion = []
     var excerpt_names = []
-    var N = 3
+    var N = 4
     var N_part2 = 12
     var candidate_trial = []
     var correct_response = []
@@ -113,7 +113,7 @@
     var emotion_game_trials = 1
     var excerpts_played = []
 
-    console.log('N = 3')
+    console.log('N = 4')
     var emotion_order = []
     for (let i=0;i<N/emotions_numeric.length;i++) {
       emotion_order = emotion_order.concat(jsPsych.randomization.sampleWithoutReplacement(emotions_numeric,emotions_numeric.length))
@@ -184,6 +184,7 @@
         document.getElementById("id_prompt").style.fontSize = '18px'
       },
       on_start: function(trial1){
+        console.log(epoch)
         jsPsych.setProgressBar((epoch+1)/N)
         current_emotion = emotions[emotion_order[epoch]-1]
         var level_trials = trials[String(current_level)][String(emotion_order[epoch])]
@@ -193,13 +194,12 @@
           candidate_trial.push(level_trials[i])
         }}
         if (candidate_trial.length > 0){
-          console.log(candidate_trial)  
+          console.log('In target')  
           current_trial = jsPsych.randomization.sampleWithoutReplacement(candidate_trial,1)[0]
         }
         else {
           level_trials = trials[String(current_level)]
           console.log('Out of target emotion')
-          console.log(level_trials)
           for (let i=1;i<5;i++) {
             for (let k=0;k<level_trials[i].length;k++) {
               if (!excerpts_played.includes(level_trials[i][k]['Name'])){
@@ -207,6 +207,7 @@
           }}}
           console.log(candidate_trial)
           if (candidate_trial.length > 0){
+            console.log('Early stopping')
             current_trial = jsPsych.randomization.sampleWithoutReplacement(candidate_trial,1)[0]
           } 
           else {
