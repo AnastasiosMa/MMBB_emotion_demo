@@ -104,7 +104,7 @@
     var current_trial = []
     var current_emotion = []
     var excerpt_names = []
-    var N = 30
+    var N = 4
     var N_part2 = 12
     var candidate_trial = []
     var correct_response = []
@@ -224,14 +224,14 @@
         trial1.data.difficulty = current_trial['Distance']
         trial1.data.correct_emotion = emotions[current_trial['Label1']-1]
         trial1.data.wrong_emotion = emotions[current_trial['Label2']-1]
-        //trial1.data.trial_index = current_trial['trial']
+        trial1.data.trial_index = current_trial['Trials']
         trial1.data.level = current_level
         trial1.choices = [images[trial_images[0]-1], images[trial_images[1]-1]]
         trial1.update_choices = [images[trial_images[0]-1], images[trial_images[1]-1]]
         },
       on_finish: function(data){
         // Score the response as correct or incorrect.
-        jsPsych.setProgressBar((epoch+1)/(N+N_part2))
+        jsPsych.setProgressBar((epoch+1)/N)
         if(data.response == trial_images.findIndex(element => element == current_trial['Label1'])){
           correct_response = 1;
           trial1.data.correct_response = 1;
