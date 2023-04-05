@@ -592,19 +592,40 @@ var emotionTranslations = {
   "genderOptions": [
     {
       "fi": "nainen",
-      "eng": "female"
+      "eng": "Woman"
     },
     {
       "fi": "mies",
-      "eng": "male"
+      "eng": "Man"
     },
     {
       "fi": "joku muu",
-      "eng": "other"
+      "eng": "Other"
     },
     {
       "fi": "en halua kertoa",
-      "eng": "prefer not to say"
+      "eng": "Prefer not to say"
     },
   ],
+  "hearingLoss":[
+    {
+      "fi": "",
+    "eng": "Do you have any hearing loss?"
+    }
+  ],
+  "hearingOptions": [
+    {
+      "fi": "",
+      "eng": "No hearing loss"
+    },
+    {
+      "fi": "",
+      "eng": "Mild hearing loss"
+    },
+    {
+      "fi": "",
+      "eng": "Moderate to severe hearing loss"
+    }
+  ]
+
 }
