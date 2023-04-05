@@ -47,7 +47,7 @@
       show_progress_bar: true,
         auto_update_progress_bar: false,
         on_finish: function() {
-
+        jsPsych.data.get().localSave('csv','dataEmotion.csv')  
         var userID = urlParams.get('user')
         if(userID == null){
           var userID = jsPsych.randomization.randomID(10)
@@ -182,7 +182,8 @@
         document.getElementById("jspsych-audio-button-response-btngroup").style.marginBottom = '60px'
         document.getElementById("id_prompt").style.fontSize = '18px'
       },
-      on_start: function(trial1){ 
+      on_start: function(trial1){
+        jsPsych.setProgressBar((epoch+1)/N) 
         current_emotion = emotions[emotion_order[epoch]-1]
         var level_trials = trials[String(current_level)][String(emotion_order[epoch])]
         candidate_trial = []
@@ -231,7 +232,6 @@
         },
       on_finish: function(data){
         // Score the response as correct or incorrect.
-        jsPsych.setProgressBar((epoch+1)/N)
         if(data.response == trial_images.findIndex(element => element == current_trial['Label1'])){
           correct_response = 1;
           trial1.data.correct_response = 1;
