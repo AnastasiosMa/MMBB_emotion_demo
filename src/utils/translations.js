@@ -607,12 +607,12 @@ var emotionTranslations = {
       "eng": "Prefer not to say"
     },
   ],
-  "hearingLoss":[
+  "hearingLoss":
     {
       "fi": "Onko sinulla kuulonalenema?",
-    "eng": "Do you have any hearing loss?"
+      "eng": "Do you have any hearing loss?"
     }
-  ],
+  ,
   "hearingOptions": [
     {
       "fi": "Ei kuulonalenemaa",
