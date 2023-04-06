@@ -591,11 +591,11 @@ var emotionTranslations = {
   },
   "genderOptions": [
     {
-      "fi": "nainen",
+      "fi": "Nainen",
       "eng": "Woman"
     },
     {
-      "fi": "mies",
+      "fi": "Mies",
       "eng": "Man"
     },
     {
@@ -609,21 +609,21 @@ var emotionTranslations = {
   ],
   "hearingLoss":[
     {
-      "fi": "",
+      "fi": "Onko sinulla kuulonalenema?",
     "eng": "Do you have any hearing loss?"
     }
   ],
   "hearingOptions": [
     {
-      "fi": "",
+      "fi": "Ei kuulonalenemaa",
       "eng": "No hearing loss"
     },
     {
-      "fi": "",
+      "fi": "Lievä kuulonalenema",
       "eng": "Mild hearing loss"
     },
     {
-      "fi": "",
+      "fi": "Keskivaikea tai vaikea kuulonalenema",
       "eng": "Moderate to severe hearing loss"
     }
   ]
