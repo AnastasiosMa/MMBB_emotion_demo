@@ -102,7 +102,10 @@ var howDifficult = {
       document.getElementById("label0").style.fontSize = '20px'
       document.getElementById("label1").style.fontSize = '20px'
     },
-};
+    on_finish: function(data){
+      jatos.appendResultData(data)
+      jatos_data.push(data)
+    }};
 
 var messageEndTask = {
   type: jsPsychHtmlButtonResponse,

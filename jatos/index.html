@@ -7,7 +7,7 @@
 
     <meta charset="UTF-8">
 
-    link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="https://unpkg.com/jspsych@7.1.2"></script> 
     <!--<script src="./jspsych/dist/jspsych.js"> </script> -->
@@ -49,8 +49,11 @@
       show_progress_bar: true,
         auto_update_progress_bar: false,
         on_finish: function() {
-        jsPsych.data.get().localSave('csv','dataEmotion.csv'),
-        jatos.endStudy(jsPsych.data.get().json())  
+          allowRefresh()
+          //jsPsych.data.get().localSave('csv','dataEmotion.csv'),
+          //jatos.endStudy(jsPsych.data.get().json())
+          jatos.submitResultData(jatos_data);
+          jatos.endStudy()  
 
     }});
 
@@ -86,6 +89,7 @@
     var excerpt_history = []
     var emotion_game_trials = 1
     var excerpts_played = []
+    var jatos_data = []
 
     var emotion_order = []
     for (let i=0;i<N/emotions_numeric.length;i++) {
@@ -105,7 +109,10 @@
       button_label_previous: buttons[1][lang],
       allow_backward: false,
       show_clickable_nav: true,
-    }
+      on_finish: function(welcomePart1){
+        jatos.appendResultData({'lang': lang})
+        jatos_data.push({'lang': lang})
+      }}
     var instructionsPart1 = {
       type: jsPsychInstructions,
       pages: emotionTranslations['instructions1'].map(i => i[lang]),
@@ -229,6 +236,8 @@
           }
         }
         epoch = epoch+1
+        jatos.appendResultData(data)
+        jatos_data.push(data)
     }}
 
     var part1_trials = {
@@ -320,79 +329,12 @@
         document.querySelector(".sv_next_btn").style.color = "#fff";
         document.querySelector(".sv_prev_btn").style.color = "#fff";
         document.querySelector(".sv_complete_btn").style.background = "#fa6400";
+      },
+      on_finish: function(data){
+        jatos.appendResultData(data)
+        jatos_data.push(data)
       }
     };
-
-    //PART2
-    var stim_dur = 8200
-    var part2_excerpts = ['091','010','093','026','077','055','037','078','088','052','028','041']
-    var part2_excerpt_order = jsPsych.randomization.repeat(part2_excerpts,1)
-    var epochPart2 = 0
-
-    var welcomePart2 = {
-      type: jsPsychInstructions,
-      pages: ['<p style="font-size:6vw;">Music and Emotion Part 2</p>'],
-      button_label_next: "Next",
-      button_label_previous: "Previous",
-      allow_backward: false,
-      show_clickable_nav: true
-    }
-    var instructionsPart2 = {
-      type: jsPsychInstructions,
-      pages: ['<p style="font-size:30px;">Instructions</p>'+'<br>In this section, you will listen to a short music'+
-      ' track and asked to rate the emotional content of the music. These ratings refer to the mood, energy and intensity of emotions expressed by the music'+
-      '<br>You can start the survey by clicking "Next"'],
-      button_label_next: "Next",
-      button_label_previous: "Previous",
-      allow_backward: true,
-      show_clickable_nav: true
-    }
-
-    var part2_audio = {
-        type: jsPsychAudioKeyboardResponse,
-        stimulus: 'part1_adaptive/trimmed_mp3/001.mp3',
-        prompt: '<p style="font-size:30px;">Listen to the music</p>',
-        trial_duration: stim_dur,
-        choices: ["NO_KEYS"],
-        on_start: function(part2_audio){
-          part2_audio.stimulus = './part1_adaptive/trimmed_part2_mp3/' + part2_excerpt_order[epochPart2] + '.mp3'
-        }
-    }
-
-    var part2_emotion_scales = {
-    type: jsPsychHtmlMultiSliderResponse,
-    stimulus: ['Mood', 'Energy', 'How strong are the emotions expressed by the music?'],
-    nSliders: 3,
-    require_movement: true,
-    slider_width: 250,
-    labels: [['Negative', 'Neutral','Positive'],['Low Energy', 'High Energy'],['Low intensity', 'High intensity']],
-    prompt: 'Please rate the emotional content of the music'
-    };
-    
-    var part2_other_scales = {
-    type: jsPsychHtmlMultiSliderResponse,
-    stimulus: ['How much did you like/dislike the music?','How familiar did the music sound to you?'],
-    nSliders: 2,
-    require_movement: true,
-    slider_width: 250,
-    labels: [['Strongly dislike','Neutral','Strongly like'],['Very unfamiliar','Very familiar']],
-    on_finish: function(part2_other_scales){
-      epochPart2 = epochPart2+1
-      jsPsych.setProgressBar((epoch+epochPart2)/(N+N_part2))
-    }
-    };
-
-    var part2_trials = {
-        timeline: [part2_audio,part2_emotion_scales,part2_other_scales],
-        repetitions: N_part2
-      }
-    
-    var the_end = {
-        type: jsPsychInstructions,
-        pages: ['<p style="font-size:2vw;">The task is now complete! Thank you for your participation</p>'],
-        button_label_next: "Next",
-        show_clickable_nav: true,
-      }  
 
     var procedureEmotionFinal = {
         timeline: [welcomePart1, generalIntroEmotion, instructionsPart1, preload, test, part1_trials, task_repeat, part1_trials, messageFinishEmotion, howDifficult,demographics].flat(1000),
