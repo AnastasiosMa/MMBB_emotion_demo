@@ -629,3 +629,21 @@ var emotionTranslations = {
   ]
 
 }
+var consent_form = [
+  {
+    "eng": "Hello",
+    "fi": "Tervetuloa"
+  },
+  {
+    "eng": "<p style='font-size:20px; '> CONSENT TO PARTICIPATE IN SCIENTIFIC RESEARCH <br>" +
+    "Musical emotions – pilot study </p><p style='font-size:14px;text-align:left'> I understand that participation in the study is voluntary and that I can stop participating at any time, without giving a reason. " +
+    "There will be no negative consequences for me if I withdraw. The data collected about me up to the point of withdrawal may still be used in the study. " +
+    "I have been adequately informed about the study and the processing of my personal data. I have received the information sheet about the study,  " +
+    "as well as the privacy notice. I have also had the opportunity to ask the researchers further questions. " +
+    "<br><br> By ticking the box, <br>   - I accept that data will be collected from me as described in information sheet, " +
+    "<br>   - I accept that my data is used in accordance with the procedures outlined in the privacy notice, " + 
+    "<br>   - I confirm that I understand the information that I have received, " +
+    "<br>   - I agree to participate in this study. </p> ",
+    "fi": "Tervetuloa"
+  }
+]
