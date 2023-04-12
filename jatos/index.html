@@ -69,7 +69,6 @@
     }});
 
     // INTRO TRIALS
-    console.log(consent_form)
     var welcomePart1 = {
       type: jsPsychInstructions,
       pages: [emotionTranslations['openStatement'][lang]],
@@ -84,13 +83,19 @@
     
     var consent = {
       type: jsPsychInstructions,
-      pages: [consent_form[1][lang]],
+      pages: [consent_form[0]],
       button_label_next: buttons[0][lang],
       button_label_previous: buttons[1][lang],
       allow_backward: false,
       show_clickable_nav: true,
     }
 
+    var confirm_consent = {
+      type: jsPsychHtmlButtonResponse,
+      choices: ['I consent and agree to participate'],
+      stimulus: consent_form[1],
+    };
+    
     var preloadTest = {
       type: jsPsychPreload,
       audio: ['./songs/movementTapAudio/elPesebre.mp3'],
@@ -111,7 +116,7 @@
       type: jsPsychAudioButtonResponse,
       stimulus: './songs/movementTapAudio/elPesebre.mp3',
       choices: [recurring[7][lang]],
-      prompt: initialInstructions[0][0][lang],
+      prompt: initialInstructions[0][4][lang],
       on_load: function(){
         document.getElementById("jspsych-content").style.fontSize = "20px";
     }};
@@ -421,7 +426,7 @@
     };
 
     var procedureEmotionFinal = {
-        timeline: [welcomePart1, consent, generalIntroEmotion, instructionsPart1, preload, test, part1_trials, task_repeat, part1_trials, messageFinishEmotion, howDifficult,demographics].flat(1000),
+        timeline: [welcomePart1, consent, confirm_consent, generalIntroEmotion, instructionsPart1, preload, test, part1_trials, task_repeat, part1_trials, messageFinishEmotion, howDifficult,demographics].flat(1000),
         on_timeline_start: function() {
           console.log('This timeline has started');
         }

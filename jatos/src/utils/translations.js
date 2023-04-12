@@ -31,11 +31,11 @@ var recurring = [
   {"eng": "When you are ready to continue, click Next", 
       "fi": "Kun olet valmis jatkamaan, paina Seuraava"},
   {"eng": "How easy was this task for you?", 
-   "fi": "kuinka helppoa tämä tehtävä oli sinulle?"},
+   "fi": "Kuinka helppo tämä tehtävä oli sinulle?"},
   {"eng": "Very easy", 
-   "fi": "Todella helppoja"}, 
+   "fi": "Todella helppo"}, 
   {"eng": "Very hard", 
-   "fi": "Todella haastavia"},
+   "fi": "Todella haastava"},
   [{"eng": "Welcome to MMBB",
           "fi": "Tervetuloa MMBB-patteriin"},
   {"eng": "For this task you will need the following items:",
@@ -81,16 +81,16 @@ var recurring = [
 ]
   
 var initialInstructions = [
-  [{"eng": "Can you hear this song?<br>If so, adjust the volume to a comfortable hearing level and click Continue.<br><img id='tableSVG' src='../../images/soundSVG.svg'><br>If you cannot hear the song, try changing to a different computer/phone or to a different internet browser.",
-    "fi": "Kuunletko tämän kappaleen?<br>Jos kuulet, säädä äänenvoimakkuutta miellyttävälle kuulotasolle ja napauta Jatka.<br><img id='tableSVG' src='../../images/soundSVG.svg'> <br>Jos et kuule kappaletta, yritä vaihtaa toiseen tietokoneeseen/puhelimeen tai toiseen internetselaimeen."},
+  [{"eng": "Can you hear this song?<br>If so, adjust the volume to a comfortable hearing level and click Continue.<br><br>If you cannot hear the song, try changing to a different computer/phone or to a different internet browser.",
+    "fi": "Kuunletko tämän kappaleen?<br>Jos kuulet, säädä äänenvoimakkuutta miellyttävälle kuulotasolle ja napauta Jatka.<br><br>Jos et kuule kappaletta, yritä vaihtaa toiseen tietokoneeseen/puhelimeen tai toiseen internetselaimeen."},
    {"eng": "Yes",
     "fi": "Kyllä"},
    {"eng": "No",
     "fi": "Ei"},
    {"eng": "Is someone helping you to complete this task?",
     "fi": "Auttaako joku sinua tämän tehtävän suorittamisessa?"},
-   {"eng": "Can you hear this song?<br>If yes, adjust the volume to a comfortable hearing level and click Next.<br>Make sure that the 'mute' button on the left side of your phone is disabled. <br> If it still doesn't work change to a different phone or to a different internet browser.",
-    "fi": "Kuunteletko tämän kappaleen?<br>Jos kyllä, säädä äänenvoimakkuus miellyttävälle kuulotasolle ja napsauta Seuraava.<br>Jos käytät iPhonea, poista käytöstä puhelimen vasemmalla puolella oleva mykistyspainike. <br> Jos se ei vieläkään toimi, vaihda toiseen puhelimeen tai toiseen Internet-selaimeen."},
+   {"eng": "Can you hear this song?<br><br>If yes, adjust the volume to a comfortable hearing level and click Continue.<br>Make sure that the 'mute' button on the left side of your phone is disabled. <br> If it still doesn't work change to a different phone or to a different internet browser.<br><br>",
+    "fi": "Kuunteletko tämän kappaleen?<br><br>Jos kyllä, säädä äänenvoimakkuus miellyttävälle kuulotasolle ja napsauta Seuraava.<br>Jos käytät iPhonea, poista käytöstä puhelimen vasemmalla puolella oleva mykistyspainike. <br> Jos se ei vieläkään toimi, vaihda toiseen puhelimeen tai toiseen Internet-selaimeen.<br><br>"},
    {"eng": "I don't know",
     "fi": "En tiedä"}
   ]
@@ -599,11 +599,11 @@ var emotionTranslations = {
       "eng": "Man"
     },
     {
-      "fi": "joku muu",
+      "fi": "Joku muu",
       "eng": "Other"
     },
     {
-      "fi": "en halua kertoa",
+      "fi": "En halua kertoa",
       "eng": "Prefer not to say"
     },
   ],
@@ -630,20 +630,41 @@ var emotionTranslations = {
 
 }
 var consent_form = [
-  {
-    "eng": "Hello",
-    "fi": "Tervetuloa"
-  },
-  {
-    "eng": "<p style='font-size:20px; '> CONSENT TO PARTICIPATE IN SCIENTIFIC RESEARCH <br>" +
-    "Musical emotions – pilot study </p><p style='font-size:14px;text-align:left'> I understand that participation in the study is voluntary and that I can stop participating at any time, without giving a reason. " +
+  "<p style='font-size:20px;text-align:left;line-height: normal'> MUSICAL EMOTIONS – PILOT STUDY </p>" +
+    "<p style='font-size:14px;text-align:left;line-height: normal'>We ask you to participate in “Musical emotions – pilot study”, which investigates how suitable " + 
+    "the items of a novel test are for measuring the perception of emotions in music. You are invited to the study " +
+    "because you are an adult over 18 years old with normal hearing and with access to the internet, a device such as a " +
+    "smartphone or laptop, and headphones. The study will involve around 150 adult participants."+
+    "<br><br>This research notification describes the study and related participation. "+
+    "You can find more information on the processing of your personal data in the following link: "+
+    "https://jyu-my.sharepoint.com/:b:/g/personal/maarhart_jyu_fi/EcnAVidj975ImyASoMlEP4wBXerhPQ4FJCFAeXNpfYpUPw?e=f5h0uA"+
+    "<br><t style='font-size:20px;text-align:left'> <br>1. Participation </t><br>Participation in this study is voluntary. You can refuse to participate in the study, stop participating "+
+    "or cancel your previously given consent, without stating any reason for this and at any time during the study. This will have no negative "+
+    "consequences to you. The study takes place during a lecture, but no registry will be made concerning which students were willing/refused to "+
+    "participate. In other words, your willingness/refusal to take part of this study will not affect you or your situation in this course in any way. "+ 
+    "If you stop participating in the study or if you cancel your consent, the personal data, samples and other information collected on you up to that point "+
+    "will be used as part of the research material as far as it is necessary in order to ensure relevant research outcomes. "+  
+    "<br><br><t style='font-size:20px;text-align:left'>2. Progress of the study </t><br>In this study, you will hear short clips of music and be asked which emotion it represents the most. To answer, you "+
+    "will select one emoticon, with an emotion word written under it (eg. Angry, sad, happy, tender). Each round has 30 clips for you to rate and lasts around "+
+    "10 minutes. The study has two rounds, so it takes around 20 minutes in total. Before the music listening part starts, you will also be asked some basic "+
+    "demographics through a short survey (e.g. age and gender).<br><br><t style='font-size:20px;text-align:left'> 3. Possible benefits from the study</t><br>Taking part of the study might not bring any personal "+
+    "benefit. The results of the study will benefit science, in the sense that it will help further develop an instrument to measure perception of emotions in music. "+
+    "<br><br><t style='font-size:20px;text-align:left'>4. Possible risks and harm</t><br>Participation in the study is not expected to cause any risks, "+
+    "harm or inconvenience. <br><br><t style='font-size:20px;text-align:left'>5. Study-related costs and compensations</t><br>No rewards will be paid for participation in the study. "+   
+    "<br><br><t style='font-size:20px;text-align:left'>6. Informing about research results and research outcomes</t><br>The study will yield scientific publications, conference and seminar presentations, teaching material, and "+
+    "practical applications (development of measurement instrument). No personal data will be published. Results will be treated in an aggregated manner, and subjects "+
+    "cannot be identified from publications.<br><br><t style='font-size:20px;text-align:left'>7. Insurance coverage for research subjects</t><br>The University of Jyväskylä has insurances for its activities and research subjects. "+
+    "The set of insurance includes a malpractice insurance, an operational liability insurance, and an optional insurance against accidents. During the research activities, the "+
+    "subjects are covered by the insurance for accidents, damages and injuries inflicted by an external cause. The accident insurance is valid during measurements and on trips integrally "+
+    "connected to them.<br><br><t style='font-size:20px;text-align:left'>8. Contact person for further information</t><br>Petri Toiviainen, petri.toiviainen@jyu.fi, +358503541753<br>Department of Music, Arts and Culture Studies, PO Box "+
+    "35(M), 40014 University of Jyväskylä, Finland</p>",
+    "<p style='font-size:20px;text-align:left;line-height: normal'> CONSENT TO PARTICIPATE IN SCIENTIFIC RESEARCH <br><br>" +
+    "Musical emotions – pilot study </p><p style='font-size:14px;text-align:left;line-height: normal'> I understand that participation in the study is voluntary and that I can stop participating at any time, without giving a reason. " +
     "There will be no negative consequences for me if I withdraw. The data collected about me up to the point of withdrawal may still be used in the study. " +
-    "I have been adequately informed about the study and the processing of my personal data. I have received the information sheet about the study,  " +
+    "<br><br>I have been adequately informed about the study and the processing of my personal data. I have received the information sheet about the study,  " +
     "as well as the privacy notice. I have also had the opportunity to ask the researchers further questions. " +
-    "<br><br> By ticking the box, <br>   - I accept that data will be collected from me as described in information sheet, " +
+    "<br><br> By clicking the button, <br>- I accept that data will be collected from me as described in information sheet, " +
     "<br>   - I accept that my data is used in accordance with the procedures outlined in the privacy notice, " + 
     "<br>   - I confirm that I understand the information that I have received, " +
-    "<br>   - I agree to participate in this study. </p> ",
-    "fi": "Tervetuloa"
-  }
+    "<br>   - I agree to participate in this study. </p> "
 ]
