@@ -81,7 +81,7 @@ var recurring = [
 ]
   
 var initialInstructions = [
-  [{"eng": "Can you hear this song?<br>If so, adjust the volume to a comfortable hearing level and click Continue.<br><br>If you cannot hear the song, try changing to a different computer/phone or to a different internet browser.",
+  [{"eng": "Can you hear this song?<br><br>If yes, adjust the volume to a comfortable hearing level and click Continue.<br><br>If you cannot hear the song, try changing to a different computer/phone or to a different internet browser.",
     "fi": "Kuunletko tämän kappaleen?<br>Jos kuulet, säädä äänenvoimakkuutta miellyttävälle kuulotasolle ja napauta Jatka.<br><br>Jos et kuule kappaletta, yritä vaihtaa toiseen tietokoneeseen/puhelimeen tai toiseen internetselaimeen."},
    {"eng": "Yes",
     "fi": "Kyllä"},
