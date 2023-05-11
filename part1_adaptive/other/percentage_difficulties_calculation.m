@@ -9,6 +9,7 @@ data = readtable('data/FIN_merged_rawdata.csv');
 format = readtable('trials.csv');
 mean_scores = readtable('data/mean_ratings_set2.xls');
 ratings = mean_scores{:,[5,7,8,9]};
+fear_ratings = mean_scores{:,"fear"};
 emo_labels = mean_scores.Properties.VariableNames([5,7,8,9]);
 for i = 1:110
     excerpt_data = data(find(data{:,2} == i),:);
@@ -16,8 +17,15 @@ for i = 1:110
     [sorted,sorted_labels] = sort(mean_excerpt_values(i,:),'descend');
     [target_emotion,target_label_idx] = max(mean_excerpt_values(i,:));
     dists = target_emotion - sorted(2:end);
-    totaldists(i) = mean(dists);
-    emo_categoty(i) = target_label_idx;
+    fear_dists = fear_ratings(i)-mean_scores{i,[5,7,8,9]};
+    if any(fear_dists<0) %if fear not highest rated emotion
+       totaldists(i) = mean([dists fear_dists target_emotion-fear_ratings(i)]);
+       emo_category(i) = target_label_idx;
+    else %if fear highest rated emotion
+       totaldists(i) = mean(fear_dists);
+       emo_category(i) = 5; 
+    end
+    
     for j = 1:3
         difficulty = sum(excerpt_data{:,emo_idxs(sorted_labels(1))}>...
             excerpt_data{:,emo_idxs(sorted_labels(1+j))})/height(excerpt_data);
@@ -36,6 +44,9 @@ for i = 1:110
         dist_ratings([i-1]*3+j).Label1 = target_label_idx
         dist_ratings([i-1]*3+j).Label2 = sorted_labels(j+1)
         dist_ratings([i-1]*3+j).Soundtrack = mean_scores{i,'Soundtrack'};
+    end
+    for j=1:3
+
     end
 end
 dist_ratings=struct2table(dist_ratings);
@@ -125,14 +136,17 @@ low = prctile(totaldists,25);
 mid = prctile(totaldists,50);
 high = prctile(totaldists,75);
 
-for i=1:4
-    idx = find(emo_categoty==i);
+for i=1:length(unique(emo_category))
+    idx = find(emo_category==i);
     [~,tmp]=min(abs(totaldists(idx)-low));
     excerpt(i,1) = idx(tmp);
+    idx(tmp)=[];
     [~,tmp]=min(abs(totaldists(idx)-mid));
     excerpt(i,2) = idx(tmp);
+    idx(tmp)=[];
     [~,tmp]=min(abs(totaldists(idx)-high));
     excerpt(i,3) = idx(tmp);
+    idx(tmp)=[];
 end
 %writematrix(excerpt,'Part2excerpts.csv')
 
