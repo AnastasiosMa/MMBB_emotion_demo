@@ -566,7 +566,8 @@ var emotionTranslations = {
     "fi": "Todella tuttu"
   },
   "thankYouRepeat": {
-    "eng": "Thank you for your responses! The task will now be repeated.",
+    "eng": "Well done! You reached midway! <br>Take a moment to move your wrists, take a breath, " +
+    "and rest your eyes. <br>When you click 'Next', the task will continue.",
     "fi": "Kiitos vastauksista! Nyt tehtävä toistuu uudelleen."
   },
   "thankYouEnd": {
@@ -625,6 +626,70 @@ var emotionTranslations = {
     {
       "fi": "Keskivaikea tai vaikea kuulonalenema",
       "eng": "Moderate to severe hearing loss"
+    }
+  ],
+  "musicianship":{
+    "eng":"Which title best describes you?",
+    "fi":"Mikä seuraavista kuvaa sinua parhaiten?"
+  },
+  "musicianshipOptions":[
+    {
+      "fi":"Ei-muusikko",
+      "eng":"Nonmusician"
+    },
+    {
+      "fi":"Musiikkia rakastava ei-muusikko",
+      "eng":"Music-loving nonmusician"
+    },
+    {
+      "fi":"Harrastajamuusikko",
+      "eng":"Amateur musician"
+    },
+    {
+      "fi":"Aktiivinen harrastajamuusikko",
+      "eng":"Serious amateur musician"
+    },
+    {
+      "fi":"Puoliammattilaismuusikko",
+      "eng":"Semiprofessional musician"
+    },
+    {
+      "fi":"Ammattilaismuusikko",
+      "eng":"Professional musician"
+    }
+  ],
+  "education":{
+    "fi":"Mikä on korkein kolulutustasosi?",
+    "eng":"What is your highest level of education completed?"
+  },
+  "educationOptions":[
+    {
+      "fi":"Peruskoulu",
+      "eng":"Middle school"
+    },
+    {
+      "fi":"Lukio",
+      "eng":"High school"
+    },
+    {
+      "fi":"Ammattikoulu",
+      "eng":"College / vocational training"
+    },
+    {
+      "fi":"Alempi korkeakoulututkinto",
+      "eng":"Bachelor's degree"
+    },
+    {
+      "fi":"Ylempi korkeakoulututkinto",
+      "eng":"Master's degree"
+    },
+    {
+      "fi":"Tohtorintutkinto",
+      "eng":"Doctoral degree"
+    },
+    {
+      "fi":"Muu",
+      "eng":"Other / prefer not to say"
     }
   ]
 

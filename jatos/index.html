@@ -125,6 +125,7 @@
       timeline: [tAudioIOS],
       conditional_function: function(){
         var OS = getMobileOperatingSystem()
+        console.log(OS)
         return (OS == "iOS" || OS == "unknown")
     }}
 
@@ -144,7 +145,7 @@
         document.getElementById("jspsych-html-button-response-btngroup").getElementsByClassName("jspsych-btn")[1].style.background = "purple"
     }};
 
-    var generalIntroEmotion = [[preloadTest, testAudioIOS, testAudioAndroid, gettingHelp]];
+    var generalIntroEmotion = [[preloadTest, testAudioIOS, testAudioAndroid]];
 
     // PART1 VARIABLES
     var images = [
@@ -289,7 +290,7 @@
         },
       on_finish: function(data){
         // Score the response as correct or incorrect.
-        jsPsych.setProgressBar((epoch+1)/N)
+        jsPsych.setProgressBar(((emotion_game_trials-1)*N+epoch+1)/(2*N))
         if(data.response == trial_images.findIndex(element => element == current_trial['Label1'])){
           correct_response = 1;
           data.correct_response = 1;
@@ -329,7 +330,6 @@
       button_label_next: buttons[0][lang],
       show_clickable_nav: true,
       on_start: function(data){
-        jsPsych.setProgressBar(0)
         epoch = 0
         current_level = 1
         emotion_game_trials = 2
@@ -337,7 +337,7 @@
         for (let i=0;i<N/emotions_numeric.length;i++) {
         emotion_order = emotion_order.concat(jsPsych.randomization.sampleWithoutReplacement(emotions_numeric,emotions_numeric.length))
         }
-        console.log(emotion_order)
+        document.getElementById("jspsych-content").style.fontSize = "20px";
         for (let i=0;i<N;i++) {
         excerpt_order.push(jsPsych.randomization.sampleWithoutReplacement([0,1],2))
     }}}  
@@ -368,6 +368,21 @@
       prompt: emotionTranslations['gender'][lang], 
       options: emotionTranslations['genderOptions'].map(i => i[lang]),
       name: 'gender', 
+      required: true
+    }
+    var qEducation = {
+      type: 'multi-choice',
+      prompt: emotionTranslations['education'][lang], 
+      options: emotionTranslations['educationOptions'].map(i => i[lang]),
+      name: 'education', 
+      required: true
+    }
+
+    var qMusicianship = {
+      type: 'multi-choice',
+      prompt: emotionTranslations['musicianship'][lang], 
+      options: emotionTranslations['musicianshipOptions'].map(i => i[lang]),
+      name: 'musicianship', 
       required: true
     }
 
@@ -406,7 +421,7 @@
 
     var demographics = {
       type: jsPsychSurvey,
-      pages: [[qAge], [qGender], [qHearingLoss], [qFeedback]],
+      pages: [[qAge], [qGender], [qEducation], [qMusicianship], [qHearingLoss], [qFeedback]],
       title: '',
       button_label_next: buttons[0][lang],
       button_label_back: buttons[1][lang],
