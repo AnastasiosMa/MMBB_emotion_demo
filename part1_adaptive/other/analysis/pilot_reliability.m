@@ -7,6 +7,40 @@ difficulty_col = 61;
 level_ended = cell(1,2); difficulty_sum = cell(1,2); lvl_achieved = cell(1,2);
 minimum_trial_num = 15;
 disp('3 Metrics used: Level ended, aggregate difficulties score, logistic regression slope')
+%% Percentage of correct responses per level
+responses = data{:,2:61};
+current_level = data{:,122:181};
+for trial = 1:60
+    for k=1:size(data,1)
+        if trial==1 || trial==31 && current_level(k,trial)==0
+           current_level(k,trial)=1;
+        elseif current_level(k,trial)==0
+           current_level(k,trial) = current_level(k,trial-1);
+        end
+    end
+end
+disp(['Percentage of correct responses across all trials: ' num2str(round((sum(sum(responses))/numel(responses))*100,2))])
+disp(['Percentage for 1st test: ' num2str(round((sum(sum(responses(:,1:30)))/numel(responses(:,1:30)))*100,2))])
+disp(['Percentage for retest: ' num2str(round((sum(sum(responses(:,31:60)))/numel(responses(:,31:60)))*100,2))])
+
+responses_v = responses(:);
+current_level_v = current_level(:);
+for i=1:16
+    n_level_all(i) = sum(sum(current_level==i));
+    correctness_all(i) = sum(responses_v(current_level_v==i))/n_level_all(i);
+    n_level_test(i) = sum(sum(current_level(:,1:30)==i));
+    correctness_test(i) = sum(responses_v(current_level_v==i))/n_level_test(i);
+    n_level_retest(i) = sum(sum(current_level(:,31:60)==i));
+    correctness_retest(i) = sum(responses_v(current_level_v==i))/n_level_retest(i);
+end
+figure
+subplot(1,2,1)
+plot([n_level_all;n_level_test;n_level_retest]','LineWidth',1)
+xlabel('Level');ylabel('Count');title('Count of level instances')
+subplot(1,2,2)
+plot([correctness_all;correctness_test;correctness_retest]','LineWidth',1)
+xlabel('Level');ylabel('Correct responses');title('Correct responses per level')
+legend({'All trials','Test trials','Retest trials'})
 %% Level ended
 disp('The level the participant reached in the last trial')
 %correct the 0's in level achieved data
