@@ -110,7 +110,7 @@ end
 %% Aggregate difficulties Score
 disp('Score based on difficulty of each trial. Difficulties rescaled to [0,1] interval. Score = sum(correct responses difficulty) - sum(1-incorrect responses difficulty)')
 trial_data = readtable('trials.csv');
-difficulty_scores = rescale(data{:,difficulty_col:difficulty_col+60});
+difficulty_scores = rescale(data{:,difficulty_col+1:difficulty_col+60});
 difficulty_scores = 1-difficulty_scores;
 for i = 1:2
     difficulty_sum{i} = zeros(size(data,1),length(minimum_trial_num:30));
@@ -142,7 +142,7 @@ end
 %% Logistic regression slope
 disp('Slope of logistic regression, X=trial difficulty, Y=correctness of response')
 trial_data = readtable('trials.csv');
-difficulty_scores = rescale(data{:,difficulty_col:difficulty_col+60});
+difficulty_scores = rescale(data{:,difficulty_col+1:difficulty_col+60});
 difficulty_scores = 1-difficulty_scores;
 for i = 1:2
     sigmoid_beta{i} = zeros(size(data,1),length(minimum_trial_num:30));
@@ -266,4 +266,3 @@ xlabel('Number of trials');ylabel('Cronbachs alpha'); title('Cronbachs alpha on 
 set(gca,'XTick',1:2:length(minimum_trial_num:30),'XTickLabel',[minimum_trial_num:2:30])
 xtickangle(0)
 legend({'Percentiles','Raw aggregate scores'},'Location','best')
-
