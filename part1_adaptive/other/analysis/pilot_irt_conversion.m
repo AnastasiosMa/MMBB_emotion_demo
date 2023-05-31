@@ -1,4 +1,4 @@
-%publish('pilot_reliability.m','format','pdf','showCode',false);
+%publish('pilot_irt_conversion.m','format','pdf','showCode',false);
 %cd Documents/projects/github/MMBB_emotion_demo/part1_adaptive/other/analysis/
 warning('off','MATLAB:table:ModifiedAndSavedVarnames');
 data = readtable('pilot_data.xlsx');
@@ -30,7 +30,19 @@ for i=1:height(trials)
     occurences(i) = sum(sum(trial_num==i));
 end
 figure
+subplot(1,2,1)
 scatter(1-rescale(trials.Distance),occurences,'filled')
+xlabel('Normalised difficulty'); ylabel('Count')
+title('Number of instances per trial')
+
+%Occurences per level
+for i =1:16
+    occurences_per_level(i) = mean(occurences(find(trials.Level==i)));
+end
+subplot(1,2,2)
+bar(occurences_per_level)
+title('Mean number of occurence per trial on each level')
+xlabel('Level'); ylabel('Mean count');
 %% Correctness ratio / Difficulty scatterplot
 responses = data{:,2:61};
 trial_num_v= trial_num(:); responses_v = responses(:);
@@ -50,6 +62,14 @@ for i = 1:height(trials)
         trial_response_ratio(i) = nan;
     end
 end
-
+%fit linear model
+[b,~,~,~,stats] = regress(trial_response_ratio',[1-rescale(trials.Distance),ones(height(trials),1)]);
+p = polyfit(1-rescale(trials.Distance(~isnan(trial_response_ratio))),trial_response_ratio(~isnan(trial_response_ratio))',2);
 figure
-scatter(1-rescale(trials.Distance),trial_response_ratio,'filled');
+hold on
+scatter(1-rescale(trials.Distance),trial_response_ratio,40,'filled');
+xlabel('Difficulty');ylabel('Correct response ratio');
+title({'Linear regression model',['R^2 = ' num2str(round(stats(1),2))]});
+plot([0:1],b(1)*[0:1]+b(2),'LineWidth',2)
+axis([0.2 1 0 1.2])
+hold off
