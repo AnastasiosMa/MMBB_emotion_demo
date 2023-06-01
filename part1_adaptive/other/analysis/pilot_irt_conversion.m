@@ -62,14 +62,55 @@ for i = 1:height(trials)
         trial_response_ratio(i) = nan;
     end
 end
+x = 1-rescale(trials.Distance(~isnan(trial_response_ratio)));
+y = trial_response_ratio(~isnan(trial_response_ratio))';
 %fit linear model
-[b,~,~,~,stats] = regress(trial_response_ratio',[1-rescale(trials.Distance),ones(height(trials),1)]);
-p = polyfit(1-rescale(trials.Distance(~isnan(trial_response_ratio))),trial_response_ratio(~isnan(trial_response_ratio))',2);
+[b,~,~,~,stats] = regress(y,[x,ones(size(x,1),1)]);
+p = polyfit(x,y,2);
+p3 = polyfit(x,y,3);
+y_polyval = polyval(p,x);
+y3_polyval = polyval(p3,x);
+
+USS = sum((y-y_polyval).^2);
+TSS = sum((y-mean(y)).^2);
+ESS =  TSS - USS;
+r_square(1) = ESS/TSS;
+
+USS = sum((y-y3_polyval).^2);
+TSS = sum((y-mean(y)).^2);
+ESS =  TSS - USS;
+r_square(2) = ESS/TSS;
+x_plot = [0:0.01:1];
+
 figure
+subplot(1,3,1)
 hold on
 scatter(1-rescale(trials.Distance),trial_response_ratio,40,'filled');
 xlabel('Difficulty');ylabel('Correct response ratio');
-title({'Linear regression model',['R^2 = ' num2str(round(stats(1),2))]});
+title({'Linear regression model',['Model: y = ' , num2str(round(b(1),2)),...
+    'x + ', num2str(round(b(2),2))],['R^2 = ' num2str(round(stats(1),2))]});
 plot([0:1],b(1)*[0:1]+b(2),'LineWidth',2)
+axis([0.2 1 0 1.2])
+hold off
+
+subplot(1,3,2)
+hold on
+scatter(1-rescale(trials.Distance),trial_response_ratio,40,'filled');
+xlabel('Difficulty');ylabel('Correct response ratio');
+title({'Quadratic model',['Model: y = ' , num2str(round(p(1),2)),...
+    'x^2 + ', num2str(round(p(2),2)), 'x + ', num2str(round(p(3),2))],...
+    ['R^2 = ' num2str(round(r_square(1),2))]});
+plot(x_plot,p(1)*(x_plot.^2)+p(2)*x_plot+p(3),'LineWidth',2)
+axis([0.2 1 0 1.2])
+hold off
+
+subplot(1,3,3)
+hold on
+scatter(1-rescale(trials.Distance),trial_response_ratio,40,'filled');
+xlabel('Difficulty');ylabel('Correct response ratio');
+title({'Cubic model',['Model: y = ' , num2str(round(p3(1),2)),'x^3 + ',num2str(round(p3(2),2)),...
+    'x^2 + ', num2str(round(p3(3),2)), 'x + ', num2str(round(p3(4),2))],...
+    ['R^2 = ' num2str(round(r_square(2),2))]});
+plot(x_plot,p3(1)*(x_plot.^3)+p3(2)*(x_plot.^2)+p3(3)*x_plot+p3(4),'LineWidth',2)
 axis([0.2 1 0 1.2])
 hold off
