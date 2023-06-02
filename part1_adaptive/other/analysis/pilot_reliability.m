@@ -109,7 +109,7 @@ for i = 1:2
 end
 %% Aggregate difficulties Score
 disp('Score based on difficulty of each trial. Difficulties rescaled to [0,1] interval. Score = sum(correct responses difficulty) - sum(1-incorrect responses difficulty)')
-trial_data = readtable('trials.csv');
+trial_data = readtable('../data/output/trials.csv');
 difficulty_scores = rescale(data{:,difficulty_col+1:difficulty_col+60});
 difficulty_scores = 1-difficulty_scores;
 for i = 1:2
@@ -141,7 +141,6 @@ for i = 1:2
 end
 %% Logistic regression slope
 disp('Slope of logistic regression, X=trial difficulty, Y=correctness of response')
-trial_data = readtable('trials.csv');
 difficulty_scores = rescale(data{:,difficulty_col+1:difficulty_col+60});
 difficulty_scores = 1-difficulty_scores;
 for i = 1:2
