@@ -1,4 +1,4 @@
-%% Combine Finnish and Spanish samples
+%% Create binary response matrix from Spanish and Finnish data
 mean_scores = readtable('data/input/mean_ratings_set2.xls');
 emo_labels = mean_scores.Properties.VariableNames([5,7,8,9]);
 excerpts_to_remove = [17,18,67,72,75,82,86,95,101];
@@ -21,10 +21,39 @@ for i =1:height(data_fi)
    data{2}(i,:) =  [data_fi{i,emo_idxs_fi},data_fi{i,track_idx_fi}]; 
 end
 
-data = [data{1};data{2}];
-%% Get difficulty scores
+data = [data{1};data{2}];%% finnish
+%% Get Mean ratings
 emo_idxs = [1:4];
 dist_ratings = struct;
+
+for i = 1:110
+    excerpt_data = data(data(:,end) == i,:);
+    %remove nans
+    excerpt_data = excerpt_data(~isnan(excerpt_data(:,1)),:);
+    mean_excerpt_values(i,:) = nanmean(excerpt_data(:,emo_idxs));
+    [target_emotion(i),target_label_idx(i)] = max(mean_excerpt_values(i,:));
+end
+
+%remove excerpts with low mean ratings
+p = prctile(diag(mean_excerpt_values(:,target_label_idx)),exclude_trials_threshold);
+idx = find(diag(mean_excerpt_values(:,target_label_idx))>p);
+%% Create binary matrix
+binary_responses = nan(length(unique(data_spa.Subject)),(length(emo_labels)-1)*110);
+%trial_name,participant_name
+% Get percentage scores
+for k = unique(data_spa.Subject)
+    participant_data = data_spa(find(data_spa.Subject==k),:);
+    for i = 1:110
+        trial_data = participant_data(find(participant_data.Track110==i),:);
+        if ~isempty(trial_data) && ~any(isnan(trial_data{:,emo_idxs_spa}))
+           trial_data{:,emo_idxs_spa} 
+        end
+    end
+end
+%% Get Percentage matrix
+emo_idxs = [1:4];
+dist_ratings = struct;
+
 for i = 1:110
     excerpt_data = data(data(:,end) == i,:);
     %remove nans
