@@ -4,6 +4,7 @@ emo_labels = mean_scores.Properties.VariableNames([5,7,8,9]);
 excerpts_to_remove = [17,18,67,72,75,82,86,95,101];
 fear_ratings = mean_scores{:,"fear"};
 exclude_trials_threshold = 10;
+emo_N = length(emo_labels);
 %% spanish
 emo_idxs_spa = [15,14,18,17];
 data_spa = readtable('data/input/SPA_merged_rawdata.csv');
@@ -24,7 +25,6 @@ end
 data = [data{1};data{2}];%% finnish
 %% Get Mean ratings
 emo_idxs = [1:4];
-dist_ratings = struct;
 
 for i = 1:110
     excerpt_data = data(data(:,end) == i,:);
@@ -34,162 +34,99 @@ for i = 1:110
     [target_emotion(i),target_label_idx(i)] = max(mean_excerpt_values(i,:));
 end
 
-%remove excerpts with low mean ratings
-p = prctile(diag(mean_excerpt_values(:,target_label_idx)),exclude_trials_threshold);
+remove_duplicates = mean_excerpt_values; 
+remove_duplicates(excerpts_to_remove,:) = [];
+remove_idxs = target_label_idx;
+remove_idxs(excerpts_to_remove) = [];
+
+%remove excerpts with low mean ratings 
+p = prctile(diag(remove_duplicates(:,remove_idxs)),exclude_trials_threshold);
 idx = find(diag(mean_excerpt_values(:,target_label_idx))>p);
-%% Create binary matrix
-binary_responses = nan(length(unique(data_spa.Subject)),(length(emo_labels)-1)*110);
+idx(find(sum(idx==excerpts_to_remove,2))) = [];
+%% Create binary matrix Spanish
+binary_responses_spa = nan(length(unique(data_spa.Subject)),(emo_N-1)*length(idx));
 %trial_name,participant_name
 % Get percentage scores
-for k = unique(data_spa.Subject)
-    participant_data = data_spa(find(data_spa.Subject==k),:);
-    for i = 1:110
+subject_id = unique(data_spa.Subject)';
+for k = 1:length(subject_id)
+    j=1;
+    participant_data = data_spa(find(data_spa.Subject==subject_id(k)),:);
+    for i = idx'
         trial_data = participant_data(find(participant_data.Track110==i),:);
         if ~isempty(trial_data) && ~any(isnan(trial_data{:,emo_idxs_spa}))
-           trial_data{:,emo_idxs_spa} 
+           wrong_emo_idx = setdiff(1:emo_N,target_label_idx(i));
+           answers = trial_data{:,emo_idxs_spa(target_label_idx(i))}>...
+               trial_data{:,emo_idxs_spa(wrong_emo_idx)};
+           binary_responses_spa(k,(j-1)*(emo_N-1)+1:j*(emo_N-1)) = answers;
         end
+        j = j+1;
     end
 end
-%% Get Percentage matrix
-emo_idxs = [1:4];
-dist_ratings = struct;
-
-for i = 1:110
-    excerpt_data = data(data(:,end) == i,:);
-    %remove nans
-    excerpt_data = excerpt_data(~isnan(excerpt_data(:,1)),:);
-    mean_excerpt_values(i,:) = nanmean(excerpt_data(:,emo_idxs));
-    [sorted,sorted_labels] = sort(mean_excerpt_values(i,:),'descend');
-    [target_emotion,target_label_idx] = max(mean_excerpt_values(i,:));
-    dists = target_emotion - sorted(2:end);
-    fear_dists = fear_ratings(i)-mean_scores{i,[5,7,8,9]};
-    if any(fear_dists<0) %if fear not highest rated emotion
-       totaldists(i) = mean([dists fear_dists target_emotion-fear_ratings(i)]);
-       emo_category(i) = target_label_idx;
-    else %if fear highest rated emotion
-       totaldists(i) = mean(fear_dists);
-       emo_category(i) = 5; 
-    end
-    
-    for j = 1:3
-        percentage_correct = sum(excerpt_data(:,emo_idxs(sorted_labels(1)))>...
-            excerpt_data(:,emo_idxs(sorted_labels(1+j))))/size(excerpt_data,1);
-        percentage_false = sum(excerpt_data(:,emo_idxs(sorted_labels(1)))<...
-            excerpt_data(:,emo_idxs(sorted_labels(1+j))))/size(excerpt_data,1);
-        [h,p,ci,stats] = ttest(excerpt_data(:,emo_idxs(sorted_labels(1))),...
-            excerpt_data(:,emo_idxs(sorted_labels(1+j))));
-        dist_ratings([i-1]*3+j).Label = strjoin([emo_labels(target_label_idx),emo_labels(sorted_labels(1+j))]);
-        dist_ratings([i-1]*3+j).Name = i;
-        dist_ratings([i-1]*3+j).TargetEmo = sorted(1);
-        dist_ratings([i-1]*3+j).ComparisonEmo = sorted(1+j);
-        dist_ratings([i-1]*3+j).PercentageCorrect = percentage_correct;
-        dist_ratings([i-1]*3+j).PercentageFalse = percentage_false;
-        dist_ratings([i-1]*3+j).Distance = dists(j);
-        dist_ratings([i-1]*3+j).Ttest = stats.tstat;
-        dist_ratings([i-1]*3+j).Label1 = target_label_idx
-        dist_ratings([i-1]*3+j).Label2 = sorted_labels(j+1)
-        dist_ratings([i-1]*3+j).Soundtrack = mean_scores{i,'Soundtrack'};
+%% Create binary matrix Finnish
+binary_responses_fi = nan(length(unique(data_fi.id)),(emo_N-1)*length(idx));
+%trial_name,participant_name
+% Get percentage scores
+subject_id = unique(data_fi.id)';
+for k = 1:length(subject_id)
+    j=1;
+    participant_data = data_fi(find(data_fi.id==subject_id(k)),:);
+    for i = idx'
+        trial_data = participant_data(find(participant_data.Track==i),:);
+        if ~isempty(trial_data) && ~any(isnan(trial_data{:,emo_idxs_fi}))
+           wrong_emo_idx = setdiff(1:emo_N,target_label_idx(i));
+           answers = trial_data{:,emo_idxs_fi(target_label_idx(i))}>...
+               trial_data{:,emo_idxs_fi(wrong_emo_idx)};
+           binary_responses_fi(k,(j-1)*(emo_N-1)+1:j*(emo_N-1)) = answers;
+        end
+        j = j+1;
     end
 end
-dist_ratings=struct2table(dist_ratings);
-dist_ratings = sortrows(dist_ratings,'Ttest','descend');
-%% Preprocess-remove trials
-%remove duplicate excerpts
-[~,unique_excerpts] = unique(mean_scores{:,'IndexInSet1'});
-unique_excerpts = sort(unique_excerpts);
-excerpts_to_remove = [17,67,72,75,82,86,95,101];
-idx = [];
-for i =1:height(dist_ratings)
-    idx(i) = ~sum(dist_ratings.Name(i)==excerpts_to_remove);
-end
-dist_ratings = dist_ratings(find(idx),:);
-%remove trials with low target emo means
-p = prctile(dist_ratings.TargetEmo,exclude_trials_threshold);
-idx = find(dist_ratings.TargetEmo>p);
-%dist_ratings = dist_ratings(idx,:);
-%% Create levels for each emotion 
-for k = 1:4
-    cell_trials{k} = dist_ratings(find(dist_ratings.Label1 == k),:);
-    levelLength = height(cell_trials{k})/16;
-    for i = 1:height(cell_trials{k})
-        cell_trials{k}.Level{i} = ceil(i/levelLength);
-    end
-end
-trials=[];
-for i = 1:4
-    trials = [trials; cell_trials{i}];
-end
-trials = sortrows(trials,'Ttest','descend');
+%combine trials
+binary_responses = [binary_responses_fi;binary_responses_spa];
 %% Plots
-%figure,plot(sort(dist_ratings{:,'Distance'})), xlabel('Trials'),ylabel('Distance')
 figure
-subplot(1,3,1)
-for i = 1:4
-    hold on
-    plot(cell_trials{i}.PercentageCorrect)
+plot(sort(nanmean(binary_responses)),'LineWidth',5)
+ylabel('Response accuracy','FontSize',24);
+xlabel('Items','FontSize',24);
+set(gca,'FontSize',24,'LineWidth',2)
+xlim([1 length(nanmean(binary_responses))])
+box on
+grid on
+%% Export data
+binary_responses = array2table(binary_responses);
+[participants{1,1:size(binary_responses_fi,1)}] = deal('fi');
+[participants{1,end+1:end+size(binary_responses_spa,1)}] = deal('spa');
+
+binary_responses.Participant = participants';
+
+%get gender information
+[~,ia] = unique(data_fi.id);
+gender_fi = data_fi.Gender(ia);
+[~,ia] = unique(data_spa.Subject);
+gender_spa = data_spa.Sex(ia);
+gender_spa(strcmpi(gender_spa,'Mujer')) = {'Female'};
+gender_spa(strcmpi(gender_spa,'Hombre')) = {'Male'};
+gender = [gender_fi;gender_spa];
+
+%create trial info table
+trial_name = 1:size(binary_responses,2);
+%get target emotion
+target_emo = repmat(target_label_idx(idx)',1,3)';
+%get incorrect emotion
+emo_options = [1:emo_N];
+for i = 1:length(idx)
+    incorrect_emo(:,i) = emo_options(emo_options~=target_emo(1,i));
 end
-legend(emo_labels),xlabel('Trials'),ylabel('Difficulty'),title('Percentages of true answer')
-hold off
-subplot(1,3,2)
-for i = 1:4
-    hold on
-    plot(sort(cell_trials{i}.Distance,'descend'))
+for i = 1:length(idx)
+    for k = 1:emo_N-1
+        labels{k,i} = [emo_labels{target_emo(k,i)}, '-',...
+            emo_labels{incorrect_emo(k,i)}];
+    end
 end
-legend(emo_labels),xlabel('Trials'),ylabel('Distance'),title('Distances of true and false answer')
-hold off
-subplot(1,3,3)
-for i = 1:4
-    hold on
-    plot(sort(cell_trials{i}.Ttest,'descend'))
-end
-legend(emo_labels),xlabel('Trials'),ylabel('Ttest value'),title('Ttest of true and false answer')
-hold off
+idx = repmat(idx,1,3)';
+trial_info = table(labels(:),target_emo(:),incorrect_emo(:),...
+    trial_name',idx(:),'VariableNames',{'Labels','TargetEmo',...
+    'ComparisonEmo','TrialNum','Track110'});
 
-%compare Difficulty metrics
-figure
-subplot(1,3,1)
-[rho,pval] = corr(trials.PercentageCorrect,trials.Distance);
-scatter(trials.PercentageCorrect,rescale(trials.Distance,0,1))
-xlabel('Percentage (percentage of true answer being higher)')
-ylabel('Distance (distance of mean emotion ratings)')
-title(['Scatterplot of Percentage and Distance: r = ', num2str(round(rho,2))])
-subplot(1,3,2)
-[rho,pval] = corr(trials.Ttest,trials.Distance);
-scatter(trials.Ttest,trials.Distance)
-xlabel('Tstatistic ')
-ylabel('Distance (distance of mean emotion ratings)')
-title(['Scatterplot of Ttest and Distance: r = ', num2str(round(rho,2))])
-subplot(1,3,3)
-[rho,pval] = corr(trials.PercentageCorrect,trials.Ttest);
-scatter(trials.PercentageCorrect,trials.Ttest)
-xlabel('Percentage (percentage of true answer being higher)')
-ylabel('Tstatistic')
-title(['Scatterplot between Percentage and Ttest: r = ', num2str(round(rho,2))])
-
-%% Save trials
-trials.Distance = trials.Ttest;
-%trials = removevars(trials,["Ttest","PercentageCorrect","PercentageFalse"]);
-trials{:,'Trials'} = [1:height(trials)]';
-%writetable(trials,'data/output/trials.csv')
-
-%% Find excerpts for part 2
-figure,plot(sort(totaldists)), xlabel('Trials'),ylabel('Distance'), title('Part2 distances')
-low = prctile(totaldists,25);
-mid = prctile(totaldists,50);
-high = prctile(totaldists,75);
-
-for i=1:length(unique(emo_category))
-    idx = find(emo_category==i);
-    [~,tmp]=min(abs(totaldists(idx)-low));
-    excerpt(i,1) = idx(tmp);
-    idx(tmp)=[];
-    [~,tmp]=min(abs(totaldists(idx)-mid));
-    excerpt(i,2) = idx(tmp);
-    idx(tmp)=[];
-    [~,tmp]=min(abs(totaldists(idx)-high));
-    excerpt(i,3) = idx(tmp);
-    idx(tmp)=[];
-end
-%writematrix(excerpt,'data/output/Part2excerpts.csv')
-
-
+%writetable(binary_responses,'data/output/binary_responses/binary_responses.csv');
+%writetable(trial_info,'data/output/binary_responses/trial_info.csv');
