@@ -43,6 +43,17 @@ subplot(1,2,2)
 bar(occurences_per_level)
 title('Mean number of occurence per trial on each level')
 xlabel('Level'); ylabel('Mean count');
+
+%%
+figure
+scatter(1-rescale(trials.Distance(4:end)),occurences(4:end),80,'filled')
+xlabel('Item difficulty','FontSize',32); 
+ylabel('Item instances','FontSize',32);
+set(gca,'FontSize',32,'LineWidth',2)
+grid on
+box on
+ylim([0 18])
+%title('Number of instances per trial')
 %% Correctness ratio / Difficulty scatterplot
 responses = data{:,2:61};
 trial_num_v= trial_num(:); responses_v = responses(:);

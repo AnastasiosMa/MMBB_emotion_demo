@@ -86,9 +86,9 @@ binary_responses = [binary_responses_fi;binary_responses_spa];
 %% Plots
 figure
 plot(sort(nanmean(binary_responses)),'LineWidth',5)
-ylabel('Response accuracy','FontSize',24);
+ylabel('Response accuracy','FontSize',32);
 xlabel('Items','FontSize',24);
-set(gca,'FontSize',24,'LineWidth',2)
+set(gca,'FontSize',32,'LineWidth',2)
 xlim([1 length(nanmean(binary_responses))])
 box on
 grid on

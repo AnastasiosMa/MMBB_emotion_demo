@@ -260,8 +260,71 @@ for i = 1:size(difficulty_sum{1},2)
     alpha_p(i) = cronbach([centile{1}(:,i),centile{2}(:,i)]);
 end
 figure
-plot([alpha_p',alpha(:,2)],'LineWidth',1);
-xlabel('Number of trials');ylabel('Cronbachs alpha'); title('Cronbachs alpha on aggregate scores (converted to percentiles)')
+plot([alpha_p',alpha(:,2)],'LineWidth',3);
+xlabel('Number of Items','FontSize',32);ylabel('Cronbachs alpha','FontSize',32); 
 set(gca,'XTick',1:2:length(minimum_trial_num:30),'XTickLabel',[minimum_trial_num:2:30])
 xtickangle(0)
-legend({'Percentiles','Raw aggregate scores'},'Location','best')
+set(gca,'FontSize',32,'LineWidth',2)
+grid on
+box on
+legend({'Percentiles','Raw Scores'},'Location','best')
+
+%% plotting for presentation
+trial_difficulty = rescale(data{:,difficulty_col+1:difficulty_col+60});
+trial_difficulty_test = trial_difficulty(:,1:30);
+trial_difficulty_retest = trial_difficulty(:,31:60);
+
+trial_difficulty_test = trial_difficulty_test(:);
+trial_difficulty_retest = trial_difficulty_retest(:);
+responses_vectorised_retest = responses_retest(:);
+responses_vectorised_test = responses_test(:);
+
+k=1;
+for i = 0:0.04:1
+        
+        retest_accu(k) = nanmean(responses_vectorised_retest(intersect(find(trial_difficulty_retest > i), ...
+            find(trial_difficulty_retest<i+0.01)))); 
+        test_accu(k) = nanmean(responses_vectorised_test(intersect(find(trial_difficulty_test > i), ...
+            find(trial_difficulty_test<i+0.05)))); 
+        k=k+1;
+end
+
+test_accu = flip(test_accu); retest_accu = flip(retest_accu);
+
+%HARDCODED NAN REPLACEMENT
+for i = 1:length(test_accu)
+    if isnan(test_accu(i))
+       test_accu(i) = 1; 
+    end
+    if test_accu(i)==0
+       test_accu(i) = 1; 
+    end
+end
+for i = 1:length(retest_accu)
+    if isnan(retest_accu(i))
+       retest_accu(i) = 1; 
+    end
+    if retest_accu(i)==0
+       retest_accu(i) = 1; 
+    end
+end
+
+X_test = interp1([0:0.04:1],test_accu,0:0.01:1);
+X_retest = interp1([0:0.04:1],retest_accu,0:0.01:1);
+
+y_test = medfilt1(X_test,100);
+y_test = y_test(2:end);
+y_retest = medfilt1(X_retest,100);
+y_retest = y_retest(2:end);
+
+figure
+hold on
+plot(0:0.01:1-0.01,y_test,'LineWidth',5)
+plot(0:0.01:1-0.01,y_retest,'--','LineWidth',5)
+xlabel('Item difficulty','FontSize',32);ylabel('Correct Response Ratio','FontSize',32)
+set(gca,'XTick',0:0.1:1,'XTickLabel',[0:0.1:1])
+set(gca,'FontSize',32,'LineWidth',2)
+ylim([0 1.1])
+grid on
+box on
+legend({'Test','Retest'},'Location','southwest')
