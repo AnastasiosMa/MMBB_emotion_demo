@@ -317,7 +317,7 @@ y_test = y_test(2:end);
 y_retest = medfilt1(X_retest,100);
 y_retest = y_retest(2:end);
 
-figure
+figure  
 hold on
 plot(0:0.01:1-0.01,y_test,'LineWidth',5)
 plot(0:0.01:1-0.01,y_retest,'--','LineWidth',5)
