@@ -1,4 +1,4 @@
-#install.packages("mirt")
+install.packages("mirt")
 
 library(mirt)
 
