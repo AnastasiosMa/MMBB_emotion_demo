@@ -130,6 +130,8 @@ age = [age_fi; nan(size(binary_responses_spa,1),1)]
 
 %Add demographics to binary responses
 binary_responses.Participant = participants';
+binary_responses.Age = age;
+binary_responses.Gender = gender;
 
 idx = repmat(idx,1,emo_N-1)';
 trial_info = table(labels(:),target_emo(:),incorrect_emo(:),...

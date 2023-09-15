@@ -106,22 +106,26 @@ hold off
 figure
 subplot(1,3,1)
 [rho,pval] = corr(trials.PercentageCorrect,trials.Distance);
-scatter(trials.PercentageCorrect,rescale(trials.Distance,0,1))
-xlabel('Percentage (percentage of true answer being higher)')
-ylabel('Distance (distance of mean emotion ratings)')
-title(['Scatterplot of Percentage and Distance: r = ', num2str(round(rho,2))])
+scatter(trials.PercentageCorrect,rescale(trials.Distance,0,1),50)
+xlabel('Percentage (percentage of true answer being higher)','FontSize',16)
+ylabel('Distance (distance of mean emotion ratings)','FontSize',16)
+title(['Scatterplot of Percentage and Distance: r = ', num2str(round(rho,2))],...
+    'FontSize',16)
 subplot(1,3,2)
 [rho,pval] = corr(trials.Ttest,trials.Distance);
-scatter(trials.Ttest,trials.Distance)
-xlabel('Tstatistic ')
-ylabel('Distance (distance of mean emotion ratings)')
-title(['Scatterplot of Ttest and Distance: r = ', num2str(round(rho,2))])
+scatter(trials.Ttest,trials.Distance,50)
+xlabel('Tstatistic ','FontSize',16)
+ylabel('Distance (distance of mean emotion ratings)','FontSize',16)
+title(['Scatterplot of Ttest and Distance: r = ', num2str(round(rho,2))],...
+    'FontSize',16)
 subplot(1,3,3)
 [rho,pval] = corr(trials.PercentageCorrect,trials.Ttest);
-scatter(trials.PercentageCorrect,trials.Ttest)
-xlabel('Percentage (percentage of true answer being higher)')
-ylabel('Tstatistic')
-title(['Scatterplot between Percentage and Ttest: r = ', num2str(round(rho,2))])
+scatter(trials.PercentageCorrect,trials.Ttest,50)
+xlabel('Percentage (percentage of true answer being higher)',...
+    'FontSize',16)
+ylabel('Tstatistic','FontSize',16)
+title(['Scatterplot between Percentage and Ttest: r = ', num2str(round(rho,2))],...
+    'FontSize',16)
 
 %% Save trials
 %trials.Distance = trials.Ttest;
