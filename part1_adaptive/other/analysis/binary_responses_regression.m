@@ -1,6 +1,6 @@
-data = readtable('../data/output/binary_responses/fear_binary_responses.csv');
+data = readtable('../data/output/binary_responses/fear_binary_responses_only.csv');
 trial_info = readtable('../data/output/binary_responses/fear_trial_info.csv');
-trialN = 404;
+trialN = size(data,2);
 emoNames = {'Angry','Fearful','Happy','Sad','Tender'};
 %% Analysis of emotion types
 difficulty = mean(data{:,1:trialN},'omitnan');
@@ -134,3 +134,19 @@ grid on
 title(['Gender and Response Accuracy: tstat=',num2str(round(stats.tstat,2)),...
     ' pval=', num2str(round(p,3))],'FontSize',36)
 hold off
+
+%%Compare theta and item values
+figure
+subplot(1,2,1)
+histogram(mean(data{:,1:trialN},'omitnan'));
+ylabel('Count','FontSize',32);
+xlabel('Response Accuracy','FontSize',24);
+title('Item Difficulty','FontSize',28);
+set(gca,'FontSize',32,'LineWidth',2)
+
+subplot(1,2,2)
+histogram(mean(data{:,1:trialN}','omitnan'));
+ylabel('Count','FontSize',32);
+xlabel('Response Accuracy','FontSize',24);
+title('Participant Ability','FontSize',28);
+set(gca,'FontSize',32,'LineWidth',2)
