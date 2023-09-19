@@ -94,24 +94,11 @@ box on
 grid on
 %% Export data
 binary_responses = array2table(binary_responses);
-[participants{1,1:size(binary_responses_fi,1)}] = deal('fi');
-[participants{1,end+1:end+size(binary_responses_spa,1)}] = deal('spa');
-
-binary_responses.Participant = participants';
-
-%get gender information
-[~,ia] = unique(data_fi.id);
-gender_fi = data_fi.Gender(ia);
-[~,ia] = unique(data_spa.Subject);
-gender_spa = data_spa.Sex(ia);
-gender_spa(strcmpi(gender_spa,'Mujer')) = {'Female'};
-gender_spa(strcmpi(gender_spa,'Hombre')) = {'Male'};
-gender = [gender_fi;gender_spa];
 
 %create trial info table
 trial_name = 1:size(binary_responses,2);
 %get target emotion
-target_emo = repmat(target_label_idx(idx)',1,3)';
+target_emo = repmat(target_label_idx(idx)',1,emo_N-1)';
 %get incorrect emotion
 emo_options = [1:emo_N];
 for i = 1:length(idx)
@@ -123,10 +110,39 @@ for i = 1:length(idx)
             emo_labels{incorrect_emo(k,i)}];
     end
 end
-idx = repmat(idx,1,3)';
+
+%construct nationality vector
+[participants{1,1:size(binary_responses_fi,1)}] = deal('fi');
+[participants{1,end+1:end+size(binary_responses_spa,1)}] = deal('spa');
+
+%construct gender and age vector
+[~,ia] = unique(data_fi.id);
+gender_fi = data_fi.Gender(ia);
+age_fi = data_fi.Age(ia);
+[~,ia] = unique(data_spa.Subject);
+gender_spa = data_spa.Sex(ia);
+gender_spa(strcmpi(gender_spa,'Mujer')) = {'Female'};
+gender_spa(strcmpi(gender_spa,'Hombre')) = {'Male'};
+gender = [gender_fi;gender_spa];
+
+age = [age_fi; nan(size(binary_responses_spa,1),1)]
+
+%Add demographics to binary responses
+binary_responses.Participant = participants';
+binary_responses.Age = age;
+binary_responses.Gender = gender;
+
+idx = repmat(idx,1,emo_N-1)';
 trial_info = table(labels(:),target_emo(:),incorrect_emo(:),...
     trial_name',idx(:),'VariableNames',{'Labels','TargetEmo',...
     'ComparisonEmo','TrialNum','Track110'});
 
+%remove trials 0.5<x<1
+d = nanmean(binary_responses{:,1:end-3});
+i = find(d>0.5 & d<1);
+binary_responses = [binary_responses(:,i), binary_responses(:,end-2:end)];
+trial_info = trial_info(i,:);
 %writetable(binary_responses,'data/output/binary_responses/binary_responses.csv');
+%writetable(binary_responses{:,end-3},'data/output/binary_responses/binary_responses_only.csv');
+
 %writetable(trial_info,'data/output/binary_responses/trial_info.csv');

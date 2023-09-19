@@ -138,5 +138,12 @@ trial_info = table(labels(:),target_emo(:),incorrect_emo(:),...
     trial_name',idx(:),'VariableNames',{'Labels','TargetEmo',...
     'ComparisonEmo','TrialNum','Track110'});
 
+%remove trials 0.5<x<1
+d = nanmean(binary_responses{:,1:end-3});
+i = find(d>0.5 & d<1);
+binary_responses = [binary_responses(:,i), binary_responses(:,end-2:end)];
+trial_info = trial_info(i,:);
 %writetable(binary_responses,'data/output/binary_responses/fear_binary_responses.csv');
+
+%writetable(binary_responses{:,end-3},'data/output/binary_responses/fear_binary_responses_only.csv');
 %writetable(trial_info,'data/output/binary_responses/fear_trial_info.csv');
