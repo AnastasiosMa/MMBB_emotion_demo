@@ -96,34 +96,43 @@ x_plot = [0:0.01:1];
 figure
 subplot(1,3,1)
 hold on
-scatter(1-rescale(trials.Distance),trial_response_ratio,40,'filled');
-xlabel('Difficulty');ylabel('Correct response ratio');
+scatter(1-rescale(trials.Distance),trial_response_ratio,80,'filled');
+xlabel('Difficulty','FontSize',20);ylabel('Correct response ratio','FontSize',20);
 title({'Linear model',['Model: y = ' , num2str(round(b(1),2)),...
-    'x + ', num2str(round(b(2),2))],['R^2 = ' num2str(round(stats(1),2))]},'FontSize',8);
-plot([0:1],b(1)*[0:1]+b(2),'LineWidth',2)
+    'x + ', num2str(round(b(2),2))],['R^2 = ' num2str(round(stats(1),2))]},'FontSize',20);
+plot([0:1],b(1)*[0:1]+b(2),'LineWidth',3)
 axis([0.2 1 0 1.2])
+set(gca,'FontSize',20,'LineWidth',2)
+box on
+grid on
 hold off
 
 subplot(1,3,2)
 hold on
-scatter(1-rescale(trials.Distance),trial_response_ratio,40,'filled');
-xlabel('Difficulty');ylabel('Correct response ratio');
+scatter(1-rescale(trials.Distance),trial_response_ratio,80,'filled');
+xlabel('Difficulty','FontSize',20);ylabel('Correct response ratio','FontSize',20);
 title({'Quadratic',['Model: y = ' , num2str(round(p(1),2)),...
     'x^2 + ', num2str(round(p(2),2)), 'x + ', num2str(round(p(3),2))],...
-    ['R^2 = ' num2str(round(r_square(1),2))]},'FontSize',8);
-plot(x_plot,p(1)*(x_plot.^2)+p(2)*x_plot+p(3),'LineWidth',2)
+    ['R^2 = ' num2str(round(r_square(1),2))]},'FontSize',20);
+plot(x_plot,p(1)*(x_plot.^2)+p(2)*x_plot+p(3),'LineWidth',3)
 axis([0.2 1 0 1.2])
+set(gca,'FontSize',20,'LineWidth',2)
+box on
+grid on
 hold off
 
 subplot(1,3,3)
 hold on
-scatter(1-rescale(trials.Distance),trial_response_ratio,40,'filled');
-xlabel('Difficulty');ylabel('Correct response ratio');
+scatter(1-rescale(trials.Distance),trial_response_ratio,80,'filled');
+xlabel('Difficulty','FontSize',20);ylabel('Correct response ratio','FontSize',20);
 title({'Cubic',['Model: y = ' , num2str(round(p3(1),2)),'x^3 + ',num2str(round(p3(2),2)),...
     'x^2 + ', num2str(round(p3(3),2)), 'x + ', num2str(round(p3(4),2))],...
-    ['R^2 = ' num2str(round(r_square(2),2))]},'FontSize',8);
-plot(x_plot,p3(1)*(x_plot.^3)+p3(2)*(x_plot.^2)+p3(3)*x_plot+p3(4),'LineWidth',2)
+    ['R^2 = ' num2str(round(r_square(2),2))]},'FontSize',20);
+plot(x_plot,p3(1)*(x_plot.^3)+p3(2)*(x_plot.^2)+p3(3)*x_plot+p3(4),'LineWidth',3)
 axis([0.2 1 0 1.2])
+set(gca,'FontSize',20,'LineWidth',2)
+box on
+grid on
 hold off
 
 y_cubic_pred = p3(1)*(x_plot.^3)+p3(2)*(x_plot.^2)+p3(3)*x_plot+p3(4);

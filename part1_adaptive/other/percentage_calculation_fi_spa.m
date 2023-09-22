@@ -120,22 +120,36 @@ hold off
 figure
 subplot(1,3,1)
 [rho,pval] = corr(trials.PercentageCorrect,trials.Distance);
-scatter(trials.PercentageCorrect,rescale(trials.Distance,0,1))
-xlabel('Percentage (percentage of true answer being higher)')
-ylabel('Distance (distance of mean emotion ratings)')
-title(['Scatterplot of Percentage and Distance: r = ', num2str(round(rho,2))])
+scatter(trials.PercentageCorrect,rescale(trials.Distance,0,1),80,'filled')
+xlabel('Response Accuracy','FontSize',26)
+ylabel('Distance (mean emotion ratings)','FontSize',26)
+title(['Response accuracy and Distance: r = ', num2str(round(rho,2))],...
+    'FontSize',20)
+set(gca,'FontSize',20,'LineWidth',3)
+box on
+grid on
+
 subplot(1,3,2)
 [rho,pval] = corr(trials.Ttest,trials.Distance);
-scatter(trials.Ttest,trials.Distance)
-xlabel('Tstatistic ')
-ylabel('Distance (distance of mean emotion ratings)')
-title(['Scatterplot of Ttest and Distance: r = ', num2str(round(rho,2))])
+scatter(trials.Ttest,trials.Distance,80,'filled')
+xlabel('Tstatistic ','FontSize',26)
+ylabel('Distance (mean emotion ratings)','FontSize',26)
+title(['Ttest and Distance: r = ', num2str(round(rho,2))],...
+    'FontSize',20)
+set(gca,'FontSize',20,'LineWidth',3)
+box on
+grid on
+
 subplot(1,3,3)
 [rho,pval] = corr(trials.PercentageCorrect,trials.Ttest);
-scatter(trials.PercentageCorrect,trials.Ttest)
-xlabel('Percentage (percentage of true answer being higher)')
-ylabel('Tstatistic')
-title(['Scatterplot between Percentage and Ttest: r = ', num2str(round(rho,2))])
+scatter(trials.PercentageCorrect,trials.Ttest,80,'filled')
+xlabel('Response Accuracy','FontSize',26)
+ylabel('Tstatistic','FontSize',26)
+title(['Response accuracy and Ttest: r = ', num2str(round(rho,2))],...
+    'FontSize',20)
+set(gca,'FontSize',20,'LineWidth',3)
+box on
+grid on
 
 %% Save trials
 trials.Distance = trials.Ttest;
