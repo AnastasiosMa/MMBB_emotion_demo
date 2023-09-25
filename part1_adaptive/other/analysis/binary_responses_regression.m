@@ -1,10 +1,10 @@
-data = readtable('../data/output/binary_responses/fear_binary_responses_only.csv');
+data = readtable('../data/output/binary_responses/fear_binary_responses.csv');
 trial_info = readtable('../data/output/binary_responses/fear_trial_info.csv');
-trialN = size(data,2);
+trialN = size(data,2)-3;
 emoNames = {'Angry','Fearful','Happy','Sad','Tender'};
 %% Analysis of emotion types
-difficulty = mean(data{:,1:trialN},'omitnan');
-X = table(trial_info{:,1},categorical(trial_info{:,2}),difficulty');
+difficulty_item = mean(data{:,1:trialN},'omitnan');
+X = table(trial_info{:,1},categorical(trial_info{:,2}),difficulty_item');
 %regressions
 model_emopairs = fitlm(X,'Var3~Var1');
 model_targetemo = fitlm(X,'Var3~Var2');
@@ -44,18 +44,18 @@ title('Response Accuracy across Emotions','FontSize',36)
 
 figure
 subplot(2,1,1)
-plot(sort(difficulty),'LineWidth',5)
+plot(sort(difficulty_item),'LineWidth',5)
 ylabel('Response accuracy','FontSize',32);
 xlabel('Items','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2)
-xlim([1 length(difficulty)])
+xlim([1 length(difficulty_item)])
 box on
 grid on
 
 subplot(2,1,2)
 hold on
 for i = 1:5
-    plot(sort(difficulty(find(trial_info{:,2}==i))),'LineWidth',5)
+    plot(sort(difficulty_item(find(trial_info{:,2}==i))),'LineWidth',5)
 end
 ylabel('Response accuracy','FontSize',32);
 xlabel('Items','FontSize',24);
@@ -65,29 +65,29 @@ box on
 grid on
 legend(emoNames,'Location','best')
 hold off
-
 %% Analysis of demographic features
-difficulty = mean(data{:,1:trialN}','omitnan');
+difficulty_p = mean(data{:,1:trialN}','omitnan');
 X = table(data{:,trialN+1},data{:,trialN+2},...
-    data{:,trialN+3},difficulty');
+    data{:,trialN+3},difficulty_p');
 %regression
 model = fitlm(X,'Var4~Var1+Var2+Var3');
+
 %plots participant response accuracy per country
 figure
 subplot(2,1,1)
-plot(sort(difficulty),'LineWidth',5)
+plot(sort(difficulty_p),'LineWidth',5)
 ylabel('Response accuracy','FontSize',32);
 xlabel('Participants','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2)
-xlim([1 length(difficulty)])
+xlim([1 length(difficulty_p)])
 box on
 grid on
 title('Response Accuracy per Participant','FontSize',36)
 
 subplot(2,1,2)
 hold on
-plot(sort(difficulty(find(strcmpi(data{:,trialN+1},'fi')))),'LineWidth',5)
-plot(sort(difficulty(find(strcmpi(data{:,trialN+1},'spa')))),'LineWidth',5)
+plot(sort(difficulty_p(find(strcmpi(data{:,trialN+1},'fi')))),'LineWidth',5)
+plot(sort(difficulty_p(find(strcmpi(data{:,trialN+1},'spa')))),'LineWidth',5)
 hold off
 ylabel('Response accuracy','FontSize',32);
 xlabel('Participants','FontSize',24);
@@ -100,18 +100,8 @@ legend({'Finnish','Spanish'},'Location','best')
 
 %age plot
 figure
-boxplot(sort(data.Age))
-ylabel('Age','FontSize',32);
-xlabel('Participants','FontSize',24);
-set(gca,'FontSize',32,'LineWidth',2)
-xlim([1 length(difficulty)])
-box on
-grid on
-title('Age (Finnish participants)','FontSize',36)
-
-figure
-[rho,pval] = corr(difficulty',data.Age,'rows','pairwise');
-scatter(difficulty',data.Age,150,'filled')
+[rho,pval] = corr(difficulty_p',data.Age,'rows','pairwise');
+scatter(difficulty_p',data.Age,150,'filled')
 xlabel('Response Accuracy',...
     'FontSize',24)
 ylabel('Age','FontSize',24)
@@ -121,10 +111,11 @@ set(gca,'FontSize',32,'LineWidth',2)
 box on
 grid on
 
-[h,p,~,stats] = ttest2(difficulty(find(strcmpi(data.Gender,'Male'))),...
-    difficulty(find(strcmpi(data.Gender,'Female'))))
+%gender
+[h,p,~,stats] = ttest2(difficulty_p(find(strcmpi(data.Gender,'Male'))),...
+    difficulty_p(find(strcmpi(data.Gender,'Female'))))
 figure
-h = boxplot(difficulty,data.Gender,'OutlierSize',16);
+h = boxplot(difficulty_p,data.Gender,'OutlierSize',16);
 set(h,{'linew'},{3})
 ylabel('Response Accuracy','FontSize',32);
 xlabel('Gender','FontSize',24);
@@ -143,6 +134,8 @@ ylabel('Count','FontSize',32);
 xlabel('Response Accuracy','FontSize',24);
 title('Item Difficulty','FontSize',28);
 set(gca,'FontSize',32,'LineWidth',2)
+xline(nanmean(nanmean(data{:,1:trialN})),'-',{'Mean Accuracy'},'LineWidth',3);
+
 
 subplot(1,2,2)
 histogram(mean(data{:,1:trialN}','omitnan'));
@@ -150,3 +143,74 @@ ylabel('Count','FontSize',32);
 xlabel('Response Accuracy','FontSize',24);
 title('Participant Ability','FontSize',28);
 set(gca,'FontSize',32,'LineWidth',2)
+xline(nanmean(nanmean(data{:,1:trialN}')),'-',{'Mean Accuracy'},'LineWidth',3);
+%% Check participant group split effect
+%number of responses per item
+responses = ~isnan(data{:,1:trialN});
+figure
+subplot(1,2,1)
+plot(sort(sum(responses)),'LineWidth',5)
+ylabel('Number of ratings','FontSize',32);
+xlabel('Items','FontSize',24);
+set(gca,'FontSize',32,'LineWidth',2)
+xlim([1 size(responses,2)])
+box on
+grid on
+
+subplot(1,2,2)
+plot(sort(sum(responses,2)),'LineWidth',5)
+ylabel('Number of ratings','FontSize',32);
+xlabel('Participants','FontSize',24);
+set(gca,'FontSize',32,'LineWidth',2)
+xlim([1 size(responses,1)])
+box on
+grid on
+sgtitle('Number of ratings per item and participant',...
+    'FontSize',32)
+
+%HARDCODED LOCATION OF PARTICIPANTS
+fi_groups = [repmat(1,1,67),repmat(2,1,47)];
+spa_groups = repmat(3,1,length(115:243));
+spa_groups(find(isnan(data{115:243,1}))) = 4; 
+groups = [fi_groups,spa_groups];
+
+model_groups = fitlm(categorical(groups),X{:,4});
+
+%participant groupings
+[p,anovatab,stats] = anova1(difficulty_p,groups);
+figure
+h = boxplot(difficulty_p,groups,'OutlierSize',16);
+set(h,{'linew'},{3})
+ylabel('Response Accuracy','FontSize',32);
+xlabel('Groups','FontSize',24);
+set(gca,'FontSize',32,'LineWidth',2)
+box on
+grid on
+title(['Participant ability per Group: Anova F=',num2str(round(anovatab{2,5},2)),...
+    ' pval=', num2str(round(anovatab{2,6},3))],'FontSize',36)
+hold off
+
+%calculate item difficulty per grouping
+[~,ia]  = unique(groups);
+group_binary = ~isnan(data{ia,1:trialN});
+disp(['Number of excerpts per group]'])  
+sum(group_binary,2)
+difficulty_item = mean(data{:,1:trialN},'omitnan');
+group_cat = [];
+group_dif = [];
+for i = 1:4
+    group_cat = [group_cat, repmat(i,1,sum(group_binary(i,:)))]; 
+    group_dif = [group_dif difficulty_item(find(group_binary(i,:)))];
+end
+%participant groupings
+[p,anovatab,stats] = anova1(group_dif,group_cat);
+figure
+h = boxplot(group_dif,group_cat,'OutlierSize',16);
+set(h,{'linew'},{3})
+ylabel('Response Accuracy','FontSize',32);
+xlabel('Groups','FontSize',24);
+set(gca,'FontSize',32,'LineWidth',2)
+box on
+grid on
+title('Item Response Accuracy and Response Accuracy','FontSize',36)
+hold off
