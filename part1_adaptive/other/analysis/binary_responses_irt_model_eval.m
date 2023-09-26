@@ -93,10 +93,14 @@ box on
 grid on
 
 %% Calculate True Test Scores
+theta_step = 0.05;
+theta_low = -5;
+theta_high = 5;
+theta_range = theta_low:theta_step:theta_high;
 %rasch
 for j = 1:trialN
     k=1;
-    for th = -5:0.05:5
+    for th = theta_range
     p_theta(j,k) = 1/(1+exp(-rasch_mirt{j,1}*(th-rasch_mirt{j,2})));
     k = k+1;
     end
@@ -106,7 +110,7 @@ figure
 plot(sum(p_theta)/trialN,'LineWidth',5)
 ylabel('Test True Score','FontSize',32);
 xlabel('Θ','FontSize',24);
-set(gca,'XTick',1:20:length(-5:0.05:5),'XTickLabel',-5:5)
+set(gca,'XTick',1:20:length(theta_range),'XTickLabel',theta_low:theta_high)
 set(gca,'FontSize',32,'LineWidth',2)
 box on
 grid on
@@ -114,7 +118,7 @@ grid on
 %2pl
 for j = 1:trialN
     k=1;
-    for th = -5:0.05:5
+    for th = theta_range
     p_theta(j,k) = 1/(1+exp(-pl2_mirt{j,1}*(th-pl2_mirt{j,2})));
     k = k+1;
     end
@@ -124,7 +128,32 @@ figure
 plot(sum(p_theta(pl2_trials,:))/length(pl2_trials),'LineWidth',5)
 ylabel('Test True Score','FontSize',32);
 xlabel('Θ','FontSize',24);
-set(gca,'XTick',1:20:length(-5:0.05:5),'XTickLabel',-5:5)
+set(gca,'XTick',1:20:length(theta_range),'XTickLabel',theta_low:theta_high)
 set(gca,'FontSize',32,'LineWidth',2)
+box on
+grid on
+
+%% Calculate Information and Standard error
+optimizer = @(i,u,j) sum(u-p_correct(j,i)')/(-sum(p_correct(j,i)'.*p_incorrect(j,i)'));
+%rasch
+k=1;
+for th = theta_range
+    for j = 1:trialN
+        p_correct = 1/(1+exp(-(th-rasch_mirt{j,2})));
+        p_incorrect = 1-p_correct;
+        information_test(j,k) = p_correct*p_incorrect;
+        se_test(k) = 1./sqrt(sum(information_test(:,k)));
+    end
+    k = k+1;
+end
+
+figure
+plot([sum(information_test)/trialN;se_test]','LineWidth',5)
+ylabel('Estimate','FontSize',32);
+xlabel('Θ','FontSize',24);
+set(gca,'XTick',1:20:length(theta_range),'XTickLabel',theta_low:theta_high)
+set(gca,'FontSize',32,'LineWidth',2)
+title('Test Information & Standard Error','FontSize',36)
+legend('Information','Standard Error','Location','best')
 box on
 grid on
