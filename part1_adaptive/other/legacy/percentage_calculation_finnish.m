@@ -2,19 +2,17 @@
 % Finnish data
 %i = excerpts, j = false excerpts, k = emotions
 %assumes emotion ratings from 7:11 column
-emo_idxs = [15,14,18,17];
+emo_idxs = [7,9,10,11];
 dist_ratings = struct;
-data = readtable('data/input/SPA_merged_rawdata.csv');
-track_idx = 22;
-mean_scores = readtable('data/input/mean_ratings_set2.xls');
+data = readtable('../data/input/FIN_merged_rawdata.csv');
+track_idx = 2;
+mean_scores = readtable('../data/input/mean_ratings_set2.xls');
 ratings = mean_scores{:,[5,7,8,9]};
 fear_ratings = mean_scores{:,"fear"};
 emo_labels = mean_scores.Properties.VariableNames([5,7,8,9]);
 %% Get difficulty scores
 for i = 1:110
     excerpt_data = data(find(data{:,track_idx} == i),:);
-    %remove nans
-    excerpt_data = excerpt_data(~isnan(excerpt_data{:,emo_idxs(1)}),:);
     mean_excerpt_values(i,:) = nanmean(excerpt_data{:,emo_idxs});
     [sorted,sorted_labels] = sort(mean_excerpt_values(i,:),'descend');
     [target_emotion,target_label_idx] = max(mean_excerpt_values(i,:));
@@ -50,12 +48,11 @@ for i = 1:110
 end
 dist_ratings=struct2table(dist_ratings);
 dist_ratings = sortrows(dist_ratings,'Ttest','descend');
-
 %% Preprocess-remove trials
 %remove duplicate excerpts
 [~,unique_excerpts] = unique(mean_scores{:,'IndexInSet1'});
 unique_excerpts = sort(unique_excerpts);
-excerpts_to_remove = [17,18,67,72,75,82,86,95,101];
+excerpts_to_remove = [17,67,72,75,82,86,95,101];
 idx = [];
 for i =1:height(dist_ratings)
     idx(i) = ~sum(dist_ratings.Name(i)==excerpts_to_remove);
@@ -78,7 +75,6 @@ for i = 1:4
     trials = [trials; cell_trials{i}];
 end
 trials = sortrows(trials,'Ttest','descend');
-
 %% Plots
 %figure,plot(sort(dist_ratings{:,'Distance'})), xlabel('Trials'),ylabel('Distance')
 figure
@@ -108,29 +104,31 @@ hold off
 figure
 subplot(1,3,1)
 [rho,pval] = corr(trials.PercentageCorrect,trials.Distance);
-scatter(trials.PercentageCorrect,rescale(trials.Distance,0,1))
-xlabel('Percentage (percentage of true answer being higher)')
-ylabel('Distance (distance of mean emotion ratings)')
-title(['Scatterplot of Percentage and Distance: r = ', num2str(round(rho,2))])
+scatter(trials.PercentageCorrect,rescale(trials.Distance,0,1),50)
+xlabel('Percentage (percentage of true answer being higher)','FontSize',16)
+ylabel('Distance (distance of mean emotion ratings)','FontSize',16)
+title(['Scatterplot of Percentage and Distance: r = ', num2str(round(rho,2))],...
+    'FontSize',16)
 subplot(1,3,2)
 [rho,pval] = corr(trials.Ttest,trials.Distance);
-scatter(trials.Ttest,trials.Distance)
-xlabel('Tstatistic ')
-ylabel('Distance (distance of mean emotion ratings)')
-title(['Scatterplot of Ttest and Distance: r = ', num2str(round(rho,2))])
+scatter(trials.Ttest,trials.Distance,50)
+xlabel('Tstatistic ','FontSize',16)
+ylabel('Distance (distance of mean emotion ratings)','FontSize',16)
+title(['Scatterplot of Ttest and Distance: r = ', num2str(round(rho,2))],...
+    'FontSize',16)
 subplot(1,3,3)
 [rho,pval] = corr(trials.PercentageCorrect,trials.Ttest);
-scatter(trials.PercentageCorrect,trials.Ttest)
-xlabel('Percentage (percentage of true answer being higher)')
-ylabel('Tstatistic')
-title(['Scatterplot between Percentage and Ttest: r = ', num2str(round(rho,2))])
-
+scatter(trials.PercentageCorrect,trials.Ttest,50)
+xlabel('Percentage (percentage of true answer being higher)',...
+    'FontSize',16)
+ylabel('Tstatistic','FontSize',16)
+title(['Scatterplot between Percentage and Ttest: r = ', num2str(round(rho,2))],...
+    'FontSize',16)
 %% Save trials
 %trials.Distance = trials.Ttest;
 %trials = removevars(trials,["Ttest","PercentageCorrect","PercentageFalse"]);
 trials{:,'Trials'} = [1:height(trials)]';
-%writetable(trials,'data/output/trials_spa.csv')
-
+%writetable(trials,'../data/output/trials_fi.csv')
 %% Find excerpts for part 2
 figure,plot(sort(totaldists)), xlabel('Trials'),ylabel('Distance'), title('Part2 distances')
 low = prctile(totaldists,25);
@@ -149,7 +147,7 @@ for i=1:length(unique(emo_category))
     excerpt(i,3) = idx(tmp);
     idx(tmp)=[];
 end
-%writematrix(excerpt,'data/output/Part2excerpts.csv')
+%writematrix(excerpt,'../data/output/Part2excerpts.csv')
 
 
 

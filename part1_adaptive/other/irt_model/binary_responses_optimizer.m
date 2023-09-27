@@ -20,18 +20,27 @@ max_item_N = max(sum(group_binary,2));
 theta_step = 0.05;
 theta_low = -8;
 theta_high = 8;
-thetaRange = theta_low:theta_step:theta_high;
-for j = 1:trialN %trial
-    k=1;
-    for th = thetaRange
+theta_range = theta_low:theta_step:theta_high;
+k=1;
+for th = theta_range
+    for j = 1:trialN
         p_correct(j,k) = 1/(1+exp(-(th-rasch_mirt{j,2})));
-        p_incorrect(j,k) = 1-(1/(1+exp(-(th-rasch_mirt{j,2}))));
-        k = k+1;
+        p_incorrect(j,k) = 1-p_correct(j,k);
+        information_test(j,k) = p_correct(j,k)*p_incorrect(j,k);
+        if k>2
+            j_der1 = [p_correct(j,k)-p_correct(j,k-1),p_correct(j,k-1)-p_correct(j,k-2)]./...
+                [theta_step,theta_step];
+            j_der2 = (j_der1(1)-j_der1(2))/theta_step;
+            j_final(j,k) = (j_der1(1)*j_der2)/information_test(j,k);
+        end
     end
+    k = k+1;
 end
-%i = th_idx, j = item order, u = participant responses th = theta value
+j_final(:,1) =  j_final(:,3); j_final(:,2) =  j_final(:,3);
+%th = th_idx, j = item order, u = participant responses th = theta value
 %index optimizer formula
-optimizer = @(i,u,j) sum(u-p_correct(j,i)')/(-sum(p_correct(j,i)'.*p_incorrect(j,i)'));
+optimizer = @(th,u,j) sum(u-p_correct(j,th)')/(-sum(p_correct(j,th)'.*p_incorrect(j,th)'));
+bias_correction = @(th,j) sum(j_final(j,th))/(2*sum(information_test(j,th)));
 %% Test optimizer
 init_th = 0; %initial starting point of theta
 learning_rate = 0.5;
@@ -40,6 +49,7 @@ n_iter = 500; %number of iterations before manual stop
 %timings = nan(size(data,1),size(data,2));
 iterations = nan(max_item_N,n_iter);
 optimizer_training_history = cell(size(data,1),500);
+optimizer_weight_adjustment_history = cell(size(data,1),500);
 for permutations = 1:500
     disp(permutations)
     perms = randperm(size(data,2));
@@ -63,14 +73,14 @@ for permutations = 1:500
                         break
                     end
                 elseif th>theta_high
-                    th_idx = length(thetaRange);
+                    th_idx = length(theta_range);
                     th = theta_high;
                     if all(participant_data(p_resp(1:trial)))%if all answers correct, break
                         break
                     end
                 else
                     %find discrete index for theta within range
-                    th_idx = find(th<=thetaRange+theta_step & th>thetaRange);
+                    th_idx = find(th<=theta_range+theta_step & th>theta_range);
                 end
                 if isempty(th_idx)
                     keyboard
@@ -82,6 +92,7 @@ for permutations = 1:500
                 iter = iter+1;
             end
             %timings(participant,trial-1) = toc(tStart);
+            optimizer_weight_adjustment_history{participant,permutations}(trial-1) = th + bias_correction(th_idx,p_resp(1:trial));
         end
     end
 end
@@ -91,9 +102,11 @@ for k = 1:size(optimizer_training_history,1)
     row = max(find(~isnan(optimizer_training_history{k,1}(:,1))));
     col = max(find(~isnan(optimizer_training_history{k,1}(row,:))));
     theta_end(k) = optimizer_training_history{k,1}(row,col);
+    weighted_theta_end(k) = optimizer_weight_adjustment_history{k,1}(end);
 end
 difficulty_p = mean(data{:,1:trialN}','omitnan');
 figure
+subplot(1,2,1)
 scatter(difficulty_p,theta_end,100,'filled')
 rho = corr(difficulty_p',theta_end');
 xlabel('Participant ability (response accuracy)',...
@@ -104,6 +117,19 @@ title(['Optimizer and ground truth correlation: r = ', num2str(round(rho,2))],..
 set(gca,'FontSize',32,'LineWidth',2)
 box on
 grid on
+
+subplot(1,2,2)
+scatter(theta_end,weighted_theta_end,100,'filled')
+rho = corr(theta_end',weighted_theta_end');
+xlabel('Maximum likelihood estimate θ',...
+    'FontSize',24)
+ylabel('Weighted likelihood estimate θ','FontSize',24)
+title(['WML and ML correlation: r = ', num2str(round(rho,2))],...
+    'FontSize',30)
+set(gca,'FontSize',32,'LineWidth',2)
+box on
+grid on
+
 
 %nationality
 figure
@@ -132,7 +158,6 @@ set(gca,'FontSize',32,'LineWidth',2)
 legend({'Finns Group 2','Finns Group 2','Spanish Group 1','Spanish Group 2'},'Location','best')
 box on
 grid on
-
 %% Plot performance across test Length
 %correlations with random permutations
 for p = 1:500
@@ -142,17 +167,20 @@ for p = 1:500
             col = max(find(~isnan(optimizer_training_history{k,p}(i,:))));
             if ~isempty(optimizer_training_history{k,p}(i,col))
                 theta(k,i) = optimizer_training_history{k,p}(i,col);
+                weighted_theta(k,i) = optimizer_weight_adjustment_history{k,p}(i);
             else
                 theta(k,i) = NaN;
+                weighted_theta(k,i) = NaN;
             end
         end
         rho(p,i) = corr(difficulty_p',theta(:,i),'rows','pairwise');
+        rho_weighted(p,i) = corr(difficulty_p',weighted_theta(:,i),'rows','pairwise');
     end
 end
 
 figure
 hold on
-plot(mean(rho),'LineWidth',5)
+plot([mean(rho)',mean(rho_weighted)'],'LineWidth',5)
 ylabel('Correlation Coefficient','FontSize',32);
 xlabel('Number of Items in Theta estimation','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2)
@@ -160,8 +188,9 @@ xlim([1 size(rho,2)])
 title('Mean r across permutations')
 low_ci = mean(rho)-(1.5*std(rho));
 high_ci = mean(rho)+(1.5*std(rho));
-fill([1:size(rho,2) fliplr(1:size(rho,2))], ...
-    [low_ci fliplr(high_ci)], 'red', 'FaceColor','r','FaceAlpha',0.3,'LineWidth',1)
+%fill([1:size(rho,2) fliplr(1:size(rho,2))], ...
+ %   [low_ci fliplr(high_ci)], 'red', 'FaceColor','r','FaceAlpha',0.3,'LineWidth',1)
+legend({'ML','Weighted ML'},'Location','best');
 box on
 grid on
 hold off
