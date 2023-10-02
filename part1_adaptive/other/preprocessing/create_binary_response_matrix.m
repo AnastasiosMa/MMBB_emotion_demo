@@ -12,6 +12,8 @@ participant_spa = 3;
 for i =1:height(data_spa)
    spa(i,:) = data_spa{i,[emo_idxs_spa, track_idx_spa,participant_spa]};
 end
+%change participant naming
+spa(:,end) = spa(:,end)+200;
 %% finnish
 emo_idxs_fi = [7,8,9,10,11];
 data_fi = readtable('../data/input/FIN_merged_rawdata.csv');
@@ -20,9 +22,7 @@ participant_fi = 6;
 
 for i =1:height(data_fi)
    fi(i,:) = data_fi{i,[emo_idxs_fi, track_idx_fi,participant_fi]};
-end
-%change participant naming
-fi(:,end) = fi(:,end)+200; 
+end 
 %% Get Mean ratings
 data = [fi;spa];
 emo_idxs = 1:5;
@@ -34,6 +34,7 @@ for i = 1:110
     [B,I] = sort(mean_excerpt_values(i,:),'descend');
     target_emotion(i) = B(1);target_label_idx(i) = I(1);
     second_emotion(i) = B(2);second_label_idx(i) = I(2);
+    third_emotion(i) = B(3);third_label_idx(i) = I(3);
 end
 remove_duplicates = mean_excerpt_values; 
 remove_duplicates(excerpts_to_remove,:) = [];
@@ -65,7 +66,7 @@ for k = 1:length(subject_id)
         j = j+1;
     end
 end
-%% Create binary matrix of non-dominant emotion
+%% Create binary matrix of secondary emotion
 subject_id = unique(data(:,end))';
 secondary_binary_responses = nan(length(unique(data(:,end))),(emo_N-2)*length(idx));
 for k = 1:length(subject_id)
@@ -82,6 +83,24 @@ for k = 1:length(subject_id)
         j = j+1;
     end
 end
+%% Create binary matrix of third emotion
+subject_id = unique(data(:,end))';
+third_binary_responses = nan(length(unique(data(:,end))),(emo_N-3)*length(idx));
+for k = 1:length(subject_id)
+    j=1;
+    participant_data = data(find(data(:,end)==subject_id(k)),:);
+    for i = idx'
+        trial_data = participant_data(find(participant_data(:,end-1)==i),:);
+        if ~isempty(trial_data) && ~any(isnan(trial_data(:,1)))
+           wrong_emo_idx = setdiff(1:emo_N,[target_label_idx(i), second_label_idx(i),...
+               third_label_idx(i)]);
+           answers = trial_data(:,emo_idxs(third_label_idx(i)))>...
+               trial_data(:,emo_idxs(wrong_emo_idx));
+           third_binary_responses(k,(j-1)*(emo_N-3)+1:j*(emo_N-3)) = answers;
+        end
+        j = j+1;
+    end
+end
 %% Plots
 figure
 plot(sort(nanmean(binary_responses)),'LineWidth',5)
@@ -93,7 +112,6 @@ box on
 grid on
 %% Prepare data for exporting (primary mean items)
 binary_responses = array2table(binary_responses);
-
 %create trial info table
 trial_name = 1:size(binary_responses,2);
 %get target emotion
@@ -109,7 +127,6 @@ for i = 1:length(idx)
             emo_labels{incorrect_emo(k,i)}];
     end
 end
-
 %construct nationality vector
 [participants{1,1:length(unique(fi(:,end)))}] = deal('fi');
 [participants{1,end+1:end+length(unique(spa(:,end)))}] = deal('spa');
@@ -142,13 +159,15 @@ i = find(d>0.5 & d<1);
 binary_responses = [binary_responses(:,i), binary_responses(:,end-2:end)];
 trial_info = trial_info(i,:);
 %writetable(binary_responses,'../data/output/binary_responses/fear_binary_responses.csv');
-%writetable(binary_responses{:,end-3},'../data/output/binary_responses/fear_binary_responses_only.csv');
 %writetable(trial_info,'../data/output/binary_responses/fear_trial_info.csv');
 %% Prepare data for exporting (SECONDARY mean items)
-secondary_binary_responses = array2table(secondary_binary_responses);
+%Item Thresholds
+upper_thx = 0.8;
+min_mean_rating = 3;
 
+secondary_binary_responses_t = array2table(secondary_binary_responses);
 %create trial info table
-second_trial_name = 1:size(secondary_binary_responses,2);
+second_trial_name = 1:size(secondary_binary_responses_t,2);
 %get target emotion
 second_emo = repmat(second_label_idx(idx)',1,emo_N-2)';
 %get incorrect emotion
@@ -164,35 +183,95 @@ for i = 1:length(idx)
     end
 end
 
-%construct nationality vector
-
-idx = repmat(idx,1,emo_N-2)';
+table_idx = repmat(idx,1,emo_N-2)';
 second_trial_info = table(second_labels(:),second_emo(:),second_incorrect_emo(:),...
-    second_trial_name',idx(:),'VariableNames',{'Labels','TargetEmo',...
+    second_trial_name',table_idx(:),'VariableNames',{'Labels','TargetEmo',...
     'ComparisonEmo','TrialNum','Track110'});
 
+second_emotion_raiting = repmat(second_emotion(idx)',1,emo_N-2)';
 %remove trials 0.75<x<1
-d = nanmean(secondary_binary_responses{:,1:end});
-i = find(d>0.5 & d<0.75);
-secondary_binary_responses = secondary_binary_responses(:,i);
+d = nanmean(secondary_binary_responses_t{:,1:end});
+i = find([d>0.5 & d<upper_thx] & [second_emotion_raiting(:)>min_mean_rating]');
+secondary_binary_responses_t = secondary_binary_responses_t(:,i);
 second_trial_info = second_trial_info(i,:);
-%writetable(secondary_binary_responses,'../data/output/binary_responses/second_binary_responses.csv');
-%writetable(secondary_binary_responses{:,end-3},'../data/output/binary_responses/second_binary_responses_only.csv');
-%writetable(second_trial_info,'../data/output/binary_responses/second_trial_info.csv');
+%% Prepare data for exporting (THIRD mean items)
+third_binary_responses_t = array2table(third_binary_responses);
+%create trial info table
+third_trial_name = 1:size(third_binary_responses_t,2);
+%get target emotion
+third_emo = repmat(third_label_idx(idx)',1,emo_N-3)';
+%get incorrect emotion
+emo_options = [1:emo_N];
+for i = 1:length(idx)
+    third_incorrect_emo(:,i) = emo_options(emo_options~=target_emo(1,i) & ...
+        emo_options~=second_emo(1,i) & emo_options~=third_emo(1,i));
+end
+for i = 1:length(idx)
+    for k = 1:emo_N-3
+        third_labels{k,i} = [emo_labels{third_emo(k,i)}, '-',...
+            emo_labels{third_incorrect_emo(k,i)}];
+    end
+end
+
+table_idx = repmat(idx,1,emo_N-3)';
+third_trial_info = table(third_labels(:),third_emo(:),third_incorrect_emo(:),...
+    third_trial_name',table_idx(:),'VariableNames',{'Labels','TargetEmo',...
+    'ComparisonEmo','TrialNum','Track110'});
+
+third_emotion_raiting = repmat(third_emotion(idx)',1,emo_N-3)';
+%remove trials 0.75<x<1
+d = nanmean(third_binary_responses_t{:,1:end});
+i = find([d>0.5 & d<upper_thx] & [third_emotion_raiting(:)>min_mean_rating]');
+third_binary_responses_t = third_binary_responses_t(:,i);
+third_trial_info = third_trial_info(i,:);
 %% Secondary trial Plots
 figure
-plot(sort(nanmean(table2array(secondary_binary_responses))),'LineWidth',5)
+hold on
+plot(sort(nanmean(table2array(secondary_binary_responses_t)))','LineWidth',5)
+plot(sort(nanmean(table2array(third_binary_responses_t)))','LineWidth',5)
 ylabel('Response accuracy','FontSize',32);
 xlabel('Items','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2)
-xlim([1 length(nanmean(table2array(secondary_binary_responses)))])
-title('Secondary Trials','Fontsize',32)
+xlim([1 length(nanmean(table2array(secondary_binary_responses_t)))])
+title('Other Trials','Fontsize',32)
+legend({'Second Highest','Third Highest'})
+box on
+grid on
+
+figure
+plot([sort(target_emotion)',sort(second_emotion)',sort(third_emotion)'],'LineWidth',5)
+ylabel('Mean Rating','FontSize',32);
+xlabel('Excerpts','FontSize',24);
+set(gca,'FontSize',32,'LineWidth',2)
+xlim([1 length(target_emotion)])
+title('Target and Secondary Mean Ratings','Fontsize',32)
+legend({'Target','Second','Third'},'Location','best')
 box on
 grid on
 %% Combine first and secondary trials
-c_trial_info = [trial_info;second_trial_info];
-c_binary_respones = [binary_responses(:,1:end-3) secondary_binary_responses,...
-    binary_responses(:,end-2:end)];
-%writetable(c_binary_respones,'../data/output/binary_responses/full_binary_responses.csv');
-%writetable(c_binary_respones{:,end-3},'../data/output/binary_responses/full_binary_responses_only.csv');
-%writetable(c_trial_info,'../data/output/binary_responses/full_trial_info.csv');
+c_trial_info = [trial_info;second_trial_info; third_trial_info];
+c_trial_info{:,'TrialNum'} = [1:height(c_trial_info)]';
+c_binary_responses = [binary_responses(:,1:end-3) secondary_binary_responses_t,...
+    third_binary_responses_t, binary_responses(:,end-2:end)];
+%writetable(c_binary_responses,'../data/output/binary_responses/binary_responses.csv');
+%writetable(c_trial_info,'../data/output/binary_responses/trial_info.csv');
+%% Histograms
+figure
+subplot(1,2,1)
+histogram(nanmean(table2array(binary_responses(:,1:end-3))));
+ylabel('Count','FontSize',32);
+xlabel('Response Accuracy','FontSize',24);
+title(['Items of Intended Emotions N = ' num2str(size(binary_responses,2))],'FontSize',28);
+set(gca,'FontSize',32,'LineWidth',2)
+m = nanmean(nanmean(table2array(binary_responses(:,1:end-3))));
+xline(m,'-',{['Mean Accuracy = ' num2str(round(m,2))]},'LineWidth',3);
+
+
+subplot(1,2,2)
+histogram(nanmean(table2array(c_binary_responses(:,1:end-3))));
+ylabel('Count','FontSize',32);
+xlabel('Response Accuracy','FontSize',24);
+title(['All Items N = ' num2str(size(c_binary_responses,2))],'FontSize',28);
+set(gca,'FontSize',32,'LineWidth',2)
+m = nanmean(nanmean(table2array(c_binary_responses(:,1:end-3))));
+xline(m,'-',{['Mean Accuracy = ' num2str(round(m,2))]},'LineWidth',3);

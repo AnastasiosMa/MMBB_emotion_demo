@@ -1,8 +1,7 @@
 %% Create binary response matrix from Spanish and Finnish data
-mean_scores = readtable('../data/input/mean_ratings_set2.xls');
-emo_labels = mean_scores.Properties.VariableNames([5,6,7,8,9]);
+emo_labels = {'Angry','Fearful','Happy','Sad','Tender'};
 excerpts_to_remove = [17,18,67,72,75,82,86,95,101];
-exclude_trials_threshold = 10;
+exclude_trials_threshold = 10; %prctile to exclude trials
 emo_N = length(emo_labels);
 %% spanish
 emo_idxs_spa = [15,16,14,18,17];
@@ -24,7 +23,6 @@ end
 data = [data{1};data{2}];%% finnish
 %% Get Mean ratings
 emo_idxs = [1:5];
-
 for i = 1:110
     excerpt_data = data(data(:,end) == i,:);
     %remove nans

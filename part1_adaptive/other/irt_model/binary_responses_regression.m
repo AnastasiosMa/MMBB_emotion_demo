@@ -1,5 +1,5 @@
-data = readtable('../data/output/binary_responses/fear_binary_responses.csv');
-trial_info = readtable('../data/output/binary_responses/fear_trial_info.csv');
+data = readtable('../data/output/binary_responses/binary_responses.csv');
+trial_info = readtable('../data/output/binary_responses/trial_info.csv');
 trialN = size(data,2)-3;
 emoNames = {'Angry','Fearful','Happy','Sad','Tender'};
 %% Analysis of emotion types
