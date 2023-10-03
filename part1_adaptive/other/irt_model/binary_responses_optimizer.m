@@ -29,6 +29,13 @@ for th = theta_range
     for j = 1:trialN
         p_correct(j,k) = guessing+(1-guessing)*(1/(1+exp(-(th-rasch_mirt{j,2}))));
         p_incorrect(j,k) = 1-p_correct(j,k);
+        product = p_correct(j,k)*p_incorrect(j,k);
+        if k>1
+            j_der1 = [p_correct(j,k)-p_correct(j,k-1)]./theta_step;
+            information_test(j,k) = j_der1^2/product;
+        else
+            information_test(:,1) =  NaN;
+        end
         %information_test(j,k) = p_correct(j,k)*p_incorrect(j,k);
         %if k>2
         %    j_der1 = [p_correct(j,k)-p_correct(j,k-1),p_correct(j,k-1)-p_correct(j,k-2)]./...
@@ -39,21 +46,23 @@ for th = theta_range
     end
     k = k+1;
 end
+information_test(:,1) =  information_test(:,2);
 %j_final(:,1) =  j_final(:,3); j_final(:,2) =  j_final(:,3);
 %th = th_idx, j = item order, u = participant responses th = theta value
 %index optimizer formula
 optimizer = @(th,u,j) sum(u-p_correct(j,th)')/(-sum(p_correct(j,th)'.*p_incorrect(j,th)'));
+optimizer_corrected_information = @(th,u,j) sum(u-p_correct(j,th)')/(-sum(information_test(j,th)));
 %bias_correction = @(th,j) sum(j_final(j,th))/(2*sum(information_test(j,th)));
 %% Test optimizer
 init_th = 0; %initial starting point of theta
 learning_rate = 0.5;
 min_criterion = theta_step; %optimizer stops if Δθ < criterion
-n_iter = 500; %number of iterations before manual stop
+n_iter = 100; %number of iterations before manual stop
 %timings = nan(size(data,1),size(data,2));
 iterations = nan(max_item_N,n_iter);
 optimizer_training_history = cell(size(data,1),500);
 optimizer_weight_adjustment_history = cell(size(data,1),500);
-for permutations = 1:500
+for permutations = 1:100
     disp(permutations)
     perms = randperm(size(data,2));
     for participant = 1:size(data,1) %per participant
@@ -92,6 +101,60 @@ for permutations = 1:500
                     p_resp(1:trial));
                 th = th-delta_th;
                 optimizer_training_history{participant,permutations}(trial-1,iter) = th;
+                iter = iter+1;
+            end
+            %timings(participant,trial-1) = toc(tStart);
+            %optimizer_weight_adjustment_history{participant,permutations}(trial-1) = th + bias_correction(th_idx,p_resp(1:trial));
+        end
+    end
+end
+%% Test optimizer with corrected information
+init_th = 0; %initial starting point of theta
+learning_rate = 0.5;
+min_criterion = theta_step; %optimizer stops if Δθ < criterion
+n_iter = 100; %number of iterations before manual stop
+%timings = nan(size(data,1),size(data,2));
+iterations = nan(max_item_N,n_iter);
+optimizer2_training_history = cell(size(data,1),500);
+for permutations = 1:100
+    disp(permutations)
+    perms = randperm(size(data,2));
+    for participant = 1:size(data,1) %per participant
+        optimizer2_training_history{participant,permutations} = iterations;
+        participant_data = data{participant,perms};
+        p_resp  = find(~isnan(participant_data));%non-empty responses for ther participant
+        for trial = 2:length(p_resp) %per participant trial
+            delta_th = 1;
+            th = init_th;
+            iter = 1;
+            tStart = tic;
+            while abs(delta_th)>min_criterion
+                if iter>n_iter
+                    break
+                end
+                if th<theta_low
+                    th_idx = 1;
+                    th = theta_low;
+                    if ~any(participant_data(p_resp(1:trial))) %if all answers wrong, break
+                        break
+                    end
+                elseif th>theta_high
+                    th_idx = length(theta_range);
+                    th = theta_high;
+                    if all(participant_data(p_resp(1:trial)))%if all answers correct, break
+                        break
+                    end
+                else
+                    %find discrete index for theta within range
+                    th_idx = find(th<=theta_range+theta_step & th>theta_range);
+                end
+                if isempty(th_idx)
+                    keyboard
+                end
+                delta_th = optimizer_corrected_information(th_idx,participant_data(p_resp(1:trial)),...
+                    p_resp(1:trial));
+                th = th-delta_th;
+                optimizer2_training_history{participant,permutations}(trial-1,iter) = th;
                 iter = iter+1;
             end
             %timings(participant,trial-1) = toc(tStart);
@@ -149,7 +212,7 @@ box on
 grid on
 %% Plot performance across test Length
 %correlations with random permutations
-for p = 1:500
+for p = 1:100
     disp(p)
     for i = 1:max_item_N
         for k = 1:size(optimizer_training_history,1)
