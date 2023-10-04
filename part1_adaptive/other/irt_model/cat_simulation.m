@@ -6,7 +6,7 @@ item_emo = trial_info{:,2};
 track = trial_info{:,end};
 trialN = length(item_difficulty);
 %% Create probability of correct and wrong sample answers
-theta_step = 0.05;
+theta_step = 0.02;
 theta_low = -6;
 theta_high = 6;
 theta_range = round(theta_low:theta_step:theta_high,2);
@@ -26,15 +26,16 @@ for th = theta_range
 end
 information_test(:,1) =  information_test(:,2);
 %% Test Parameters
-test_length = 30;
+test_length = 50;
+current_test_length = 20;
 start_difficulty = 0;
 optimizer = 1; %1 fixed difficulty, 2 ml optimizer
 %simulation parameters
-permutations = 1000;
+permutations = 10;
 N = 1000;
 
 %data matrices
-th = 1.5.*randn(N,permutations); %1000 participants, 1.5 std, mean 0
+th = 1.5.*randn(permutations,N); %1000 participants, 1.5 std, mean 0
 track110 = nan(permutations,N,test_length);
 th_est = nan(permutations,N,test_length);
 trial_idx_selected = nan(permutations,N,test_length);
@@ -93,10 +94,10 @@ for p = 1:permutations
             end
             if epoch>1
                 [th_est(p,k,epoch), th_est_idx] = ml_optimizer(th_est(p,k,epoch-1),optimizer,...
-                    responses,trial_idx,p_correct,p_incorrect);
+                    responses,trial_idx,p_correct,p_incorrect,th(p,k));
             else
                 [th_est(p,k,epoch), th_est_idx] = ml_optimizer(th_est(p,k,epoch),optimizer,...
-                    responses,trial_idx,p_correct,p_incorrect);
+                    responses,trial_idx,p_correct,p_incorrect,th(p,k));
             end
             if isnan(th_est(p,k,epoch)) | isempty(th_est_idx)
                 keyboard
@@ -114,6 +115,7 @@ end
 for i = 1:test_length
     th_model = th_est(:,:,i);
     rho(i) = corr(th_model(:),th(:),'rows','pairwise');
+    mae(i) = std(th(:) - th_model(:));
 end
 
 figure
@@ -123,7 +125,7 @@ ylabel('Correlation Coefficient','FontSize',32);
 xlabel('Test Length','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2)
 xlim([1 size(rho,2)])
-xline(20,'LineWidth',5)
+xline(current_test_length,'LineWidth',5)
 title('Correlation of true ability and test estimate')
 box on
 grid on
@@ -131,16 +133,71 @@ hold off
 
 figure
 hold on
-scatter(th_est(1,:,20),th(1,:),100,'filled');
+plot(mae,'LineWidth',5)
+ylabel('Standard deviation','FontSize',32);
+xlabel('Test Length','FontSize',24);
+set(gca,'FontSize',32,'LineWidth',2)
+xlim([1 size(rho,2)])
+xline(current_test_length,'LineWidth',5)
+title('Standard deviation of θ-θhat')
+box on
+grid on
+hold off
+
+figure
+hold on
+scatter(th_est(1,:,current_test_length),th(1,:),100,'filled');
 xlabel('Optimizer estimates','FontSize',24);
 ylabel('True estimates','FontSize',24);
-title({['Scatterplot of 1 permutation, TestLength=20'], ['r=' num2str(round(corr(th_est(1,:,20),...
-    th(1,:)),2))]},'FontSize',28)
+title({['Scatterplot of 1 permutation, TestLength=20'], ['r=' num2str(round(corr(th_est(1,:,current_test_length)',...
+    th(1,:)','type','Spearman'),2))]},'FontSize',28)
 set(gca,'FontSize',32,'LineWidth',2)
 h = lsline();
 h.LineWidth = 5;h.Color = 'k';
-xlim([-3 3]);
-ylim([-3 3])
+%xlim([-5 5]);
+%ylim([-5 5])
+box on
+grid on
+hold off
+
+%optimizer ratio
+for i =1:test_length
+op_data = optimizer_history(:,:,i);
+op_mean(i)=mean(op_data(:)-1);
+end
+
+figure
+hold on
+plot(op_mean,'LineWidth',5)
+ylabel('Optimizer ratio','FontSize',32);
+xlabel('Test Length','FontSize',24);
+set(gca,'FontSize',32,'LineWidth',2)
+xlim([1 length(op_mean)])
+xline(current_test_length,'LineWidth',5)
+title('Optimizer2/Fixed Difficulty')
+box on
+grid on
+hold off
+%% Check results of individual participants
+th_model = th_est(:,:,current_test_length);
+th_model = th_model(:);
+th_temp = th(:);
+i = 1;
+for k = theta_low:theta_high
+    idx = find(th_temp>k & th_temp<k+1);
+    sd(i) = std(th_temp(idx) - th_model(idx));
+    groupN(i) = length(idx);
+    i = i+1;
+end
+
+figure
+hold on
+plot(sd,'LineWidth',5)
+ylabel('Standard Deviation','FontSize',32);
+xlabel('Theta','FontSize',24);
+set(gca,'FontSize',32,'LineWidth',2,'XTick',1:length(theta_low:theta_high),...
+    'XTickLabel',theta_low:theta_high)
+title('SD for different theta values')
 box on
 grid on
 hold off
