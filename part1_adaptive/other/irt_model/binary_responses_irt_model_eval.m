@@ -116,7 +116,7 @@ xline(mean(rasch_mirt{:,2}),'-',{'Mean θ'},'LineWidth',3);
 subplot(1,2,2)
 histogram(participant_scores{:,1});
 ylabel('Count','FontSize',32);
-xlabel('Participant ability (ML)','FontSize',24);
+xlabel('Θ (Participant Ability)','FontSize',24);
 title('Rasch ML estimates','FontSize',28);
 set(gca,'FontSize',32,'LineWidth',2)
 xline(mean(participant_scores{:,1}),'-',{'Mean θ'},'LineWidth',3);
@@ -159,16 +159,24 @@ grid on
 k=1;
 for th = theta_range
     for j = 1:trialN
-        p_correct = guessing+(1-guessing)*(1/(1+exp(-(th-rasch_mirt{j,2}))));
-        p_incorrect = 1-p_correct;
-        information_test(j,k) = p_correct*p_incorrect;
-        se_test(k) = 1./sqrt(sum(information_test(:,k)));
+        p_correct(j,k) = guessing+(1-guessing)*(1/(1+exp(-(th-rasch_mirt{j,2}))));
+        p_incorrect(j,k) = 1-p_correct(j,k);
+        product = p_correct(j,k)*p_incorrect(j,k);
+        if k>1
+            j_der1 = [p_correct(j,k)-p_correct(j,k-1)]./theta_step;
+            information_test(j,k) = j_der1^2/product;
+        else
+            information_test(:,1) =  NaN;
+        end
     end
+    se_test(k) = 1./sqrt(sum(information_test(:,k)));
     k = k+1;
 end
+information_test(:,1) =  information_test(:,2);
+se_test(1) = 1./sqrt(sum(information_test(:,1)));
 
 figure
-plot([sum(information_test)/trialN;se_test]','LineWidth',5)
+plot([rescale(sum(information_test)/trialN);rescale(se_test)]','LineWidth',5)
 ylabel('Estimate','FontSize',32);
 xlabel('Θ','FontSize',24);
 set(gca,'XTick',1:20:length(theta_range),'XTickLabel',theta_low:theta_high)
@@ -177,7 +185,6 @@ title('Test Information & Standard Error','FontSize',36)
 legend('Information','Standard Error','Location','best')
 box on
 grid on
-
 %% Correlations of participants ability
 difficulty_p = mean(data{:,1:trialN}','omitnan'); 
 rho = corr([table2array(participant_scores),difficulty_p']);

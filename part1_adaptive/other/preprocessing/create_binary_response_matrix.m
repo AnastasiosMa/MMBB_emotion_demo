@@ -227,14 +227,15 @@ third_trial_info = third_trial_info(i,:);
 %% Secondary trial Plots
 figure
 hold on
+plot(sort(nanmean(binary_responses{:,1:end-3}))','LineWidth',5)
 plot(sort(nanmean(table2array(secondary_binary_responses_t)))','LineWidth',5)
 plot(sort(nanmean(table2array(third_binary_responses_t)))','LineWidth',5)
 ylabel('Response accuracy','FontSize',32);
 xlabel('Items','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2)
-xlim([1 length(nanmean(table2array(secondary_binary_responses_t)))])
-title('Other Trials','Fontsize',32)
-legend({'Second Highest','Third Highest'})
+xlim([1 length(nanmean(binary_responses{:,1:end-3}))])
+title('All Items','Fontsize',32)
+legend({'Target','Second Highest','Third Highest'},'Location','best')
 box on
 grid on
 

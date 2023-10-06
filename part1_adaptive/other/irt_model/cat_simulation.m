@@ -35,10 +35,11 @@ permutations = 10;
 N = 1000;
 
 %data matrices
-th = 1.5.*randn(permutations,N); %1000 participants, 1.5 std, mean 0
+th = 3.*randn(permutations,N); %1000 participants, 1.5 std, mean 0
 track110 = nan(permutations,N,test_length);
 th_est = nan(permutations,N,test_length);
 trial_idx_selected = nan(permutations,N,test_length);
+deviation_from_ground_truth = nan(permutations,N,test_length);
 emotion_history = nan(permutations,N,test_length);
 optimizer_history = nan(permutations,N,test_length);
 response_accuracy = nan(permutations,N);
@@ -86,6 +87,11 @@ for p = 1:permutations
             %propabilities of participant response
             responses(epoch) = randsrc(1,1,[0,1;p_incorrect(trial_idx(epoch),th_idx),...
                 p_correct(trial_idx(epoch),th_idx)]);
+            if responses(epoch)
+                deviation_from_ground_truth(p,k,epoch) = p_incorrect(trial_idx(epoch),th_idx);
+            else
+                deviation_from_ground_truth(p,k,epoch) = p_correct(trial_idx(epoch),th_idx);
+            end
             %check for optimizer change
             if all(responses) | all(~responses)
                 optimizer = 1;
@@ -116,17 +122,34 @@ for i = 1:test_length
     th_model = th_est(:,:,i);
     rho(i) = corr(th_model(:),th(:),'rows','pairwise');
     mae(i) = std(th(:) - th_model(:));
+    deviation = mean(deviation_from_ground_truth(:,:,1:i),3);
+    rho_div(i) = corr(deviation(:),th_model(:),'rows','pairwise');
+    dev_mean(i) = mean(mean(deviation));
 end
 
 figure
 hold on
-plot(rho,'LineWidth',5)
+plot(dev_mean,'LineWidth',5)
+ylabel('Mean Deviation','FontSize',32);
+xlabel('Test Length','FontSize',24);
+set(gca,'FontSize',32,'LineWidth',2)
+xlim([1 size(rho,2)])
+xline(current_test_length,'LineWidth',5)
+title('Deviation from ground truth')
+box on
+grid on
+hold off
+
+figure
+hold on
+plot([rho',rho_div'],'LineWidth',5)
 ylabel('Correlation Coefficient','FontSize',32);
 xlabel('Test Length','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2)
 xlim([1 size(rho,2)])
 xline(current_test_length,'LineWidth',5)
 title('Correlation of true ability and test estimate')
+legend({'True Ability','Ground Truth Deviation'},'Location','best')
 box on
 grid on
 hold off
@@ -162,8 +185,8 @@ hold off
 
 %optimizer ratio
 for i =1:test_length
-op_data = optimizer_history(:,:,i);
-op_mean(i)=mean(op_data(:)-1);
+    op_data = optimizer_history(:,:,i);
+    op_mean(i)=mean(op_data(:)-1);
 end
 
 figure
