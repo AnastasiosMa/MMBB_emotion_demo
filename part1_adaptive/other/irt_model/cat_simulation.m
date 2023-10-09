@@ -1,14 +1,18 @@
 %% Run adaptive test simulation
 trial_info = readtable('../data/output/binary_responses/final_trial_info.csv');
 rasch_mirt = readtable('../data/output/binary_responses/irt_models/final_rasch_mirt.csv');
+participant_scores = readtable('../data/output/binary_responses/irt_models/participantScores.csv');
 item_difficulty = rasch_mirt{:,2};
 item_emo = trial_info{:,2};
 track = trial_info{:,end};
 trialN = length(item_difficulty);
+experiment = 1;
+use_only_fixed_difficulty = 0;
+starting_item_difficulty = [-1 1 0 -2 2 3 -3];
 %% Create probability of correct and wrong sample answers
 theta_step = 0.02;
-theta_low = -6;
-theta_high = 6;
+theta_low = -5;
+theta_high = 5;
 theta_range = round(theta_low:theta_step:theta_high,2);
 guessing = 0.5;
 k=1;
@@ -35,14 +39,22 @@ permutations = 10;
 N = 1000;
 
 %data matrices
-th = 3.*randn(permutations,N); %1000 participants, 1.5 std, mean 0
+if experiment==1
+    th = 1.5*randn(permutations,N); %1000 participants, 1.5 std, mean 0
+elseif experiment==2
+    th = linspace(theta_low, theta_high,N);
+    th = repmat(th,[permutations,1]);
+end
 track110 = nan(permutations,N,test_length);
 th_est = nan(permutations,N,test_length);
 trial_idx_selected = nan(permutations,N,test_length);
 deviation_from_ground_truth = nan(permutations,N,test_length);
+deviation_mistakes_only = nan(permutations,N,test_length);
 emotion_history = nan(permutations,N,test_length);
 optimizer_history = nan(permutations,N,test_length);
 response_accuracy = nan(permutations,N);
+deviation_from_item_difficulty = nan(permutations,N,test_length);
+compare_information_vs_it = nan(permutations,N,test_length);
 %% Test simulation
 for p = 1:permutations
     disp(['Permutation: ' num2str(p)]);
@@ -64,25 +76,41 @@ for p = 1:permutations
         [~,start_trial_candidates] = sort(abs(item_difficulty(find(item_emo==emo_strat(1)))));
         trial_idx(epoch) = start_trial_candidates(randi(4,1));
         %find th_idx of TRUE ABILITY
-        if th(p,k)<theta_low
+        if th(p,k)<=theta_low
             th_idx = 1;
-        elseif th(p,k)>theta_high
+        elseif th(p,k)>=theta_high
             th_idx = length(theta_range);
         else
             th_idx = find(th(p,k)<=theta_range+theta_step & th(p,k)>theta_range);
         end
+        %set th_est =0
+        th_est_idx = round(length(theta_range)/2);
+        th_est(p,k,epoch) = 0;
+        starting_item_difficulty = starting_item_difficulty(randperm(length(starting_item_difficulty)));
         while epoch<=test_length
-            if epoch>1
+            if epoch>length(starting_item_difficulty)
                 %remove trials of previously listened excerpts
                 trial_candidates = find(item_emo==emo_strat(epoch) & all(track_selected~=track,2));
                 %shuffle candidate trials
                 trial_candidates = trial_candidates(randperm(length(trial_candidates)));
+
+                %[~,min_dist] = sort(abs(th_est(p,k,epoch-1) - item_difficulty(trial_candidates)));
+                %trial_idx(epoch) = trial_candidates(min_dist(1));
+                %temp_trial = trial_idx(epoch);
                 [~,trial_idx(epoch)] = max(information_test(trial_candidates,th_est_idx));
                 trial_idx(epoch) = trial_candidates(trial_idx(epoch));
+                %compare_information_vs_it(p,k,epoch) = item_difficulty(temp_trial)-item_difficulty(trial_idx(epoch));
             else
-                th_est_idx = round(length(theta_range)/2);
-                th_est(p,k,epoch) = 0;
+                if epoch==1
+                    trial_candidates = find(item_emo==emo_strat(epoch));
+                else
+                    trial_candidates = find(item_emo==emo_strat(epoch) & all(track_selected~=track,2));
+                end
+                trial_candidates = trial_candidates(randperm(length(trial_candidates)));
+                [~,min_dist] = sort(abs(starting_item_difficulty(epoch) - item_difficulty(trial_candidates)));
+                trial_idx(epoch) = trial_candidates(min_dist(randi(4,1)));
             end
+            deviation_from_item_difficulty(p,k,epoch) = th(p,k)-item_difficulty(trial_idx(epoch));
             track_selected(epoch) = track(trial_idx(epoch));
             %propabilities of participant response
             responses(epoch) = randsrc(1,1,[0,1;p_incorrect(trial_idx(epoch),th_idx),...
@@ -92,10 +120,16 @@ for p = 1:permutations
             else
                 deviation_from_ground_truth(p,k,epoch) = p_correct(trial_idx(epoch),th_idx);
             end
+
+            if p_correct(trial_idx(epoch),th_idx)>0.5 & ~responses(epoch)
+                deviation_mistakes_only(p,k,epoch) = p_correct(trial_idx(epoch),th_idx);
+            else
+                deviation_mistakes_only(p,k,epoch) = 0;
+            end
             %check for optimizer change
             if all(responses) | all(~responses)
                 optimizer = 1;
-            else
+            elseif ~use_only_fixed_difficulty
                 optimizer = 2;
             end
             if epoch>1
@@ -118,13 +152,32 @@ for p = 1:permutations
     end
 end
 %% Evaluate simulation results
+%distribution of generated abilities
+figure
+hist(th(:))
+set(gca,'FontSize',32,'LineWidth',2)
+title('Distribution of generated participants ability')
+box on
+xlabel('Θ')
+grid on
+hold off
+
+%get mean error and corr of th and th_est
 for i = 1:test_length
     th_model = th_est(:,:,i);
     rho(i) = corr(th_model(:),th(:),'rows','pairwise');
-    mae(i) = std(th(:) - th_model(:));
+    mae(:,i) = th(:) - th_model(:);
     deviation = mean(deviation_from_ground_truth(:,:,1:i),3);
     rho_div(i) = corr(deviation(:),th_model(:),'rows','pairwise');
     dev_mean(i) = mean(mean(deviation));
+    [b(i,:),~,~,~,stats] = regress(th(:),[th_model(:),deviation(:),ones(numel(th_model),1)]);
+    r_sq_dev1(i) = stats(1);
+    %deviation mistakes only
+    deviation = mean(deviation_mistakes_only(:,:,1:i),3);
+    rho_dev2(i) = corr(deviation(:),th_model(:),'rows','pairwise');
+    dev2_mean(i) = mean(mean(deviation));
+    [bdev2(i,:),~,~,~,stats] = regress(th(:),[th_model(:),deviation(:),ones(numel(th_model),1)]);
+    r_sq_dev2(i) = stats(1);
 end
 
 figure
@@ -142,22 +195,30 @@ hold off
 
 figure
 hold on
-plot([rho',rho_div'],'LineWidth',5)
+plot(rho,'LineWidth',5)
 ylabel('Correlation Coefficient','FontSize',32);
 xlabel('Test Length','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2)
 xlim([1 size(rho,2)])
 xline(current_test_length,'LineWidth',5)
 title('Correlation of true ability and test estimate')
-legend({'True Ability','Ground Truth Deviation'},'Location','best')
 box on
 grid on
 hold off
 
 figure
+hist(mae(:,current_test_length))
+set(gca,'FontSize',32,'LineWidth',2)
+title(['Mean Error of θ-θhat for Trial Length = ', num2str(current_test_length)])
+box on
+xlabel('Error','FontSize',32)
+grid on
+hold off
+
+figure
 hold on
-plot(mae,'LineWidth',5)
-ylabel('Standard deviation','FontSize',32);
+plot(mean(mae),'LineWidth',5)
+ylabel('Mean error (θ-θ hat)','FontSize',32);
 xlabel('Test Length','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2)
 xlim([1 size(rho,2)])
@@ -201,26 +262,56 @@ title('Optimizer2/Fixed Difficulty')
 box on
 grid on
 hold off
-%% Check results of individual participants
+
+if experiment==2
+    for i =15:test_length
+        item_dif_dev{i} = mean(deviation_from_item_difficulty(:,:,15:i),3);
+    end
+    figure
+    plot(mean(item_dif_dev{current_test_length}),'LineWidth',5)
+    ylabel('Mean Deviation','FontSize',32);
+    xlabel('Θ','FontSize',24);
+    set(gca,'FontSize',32,'LineWidth',2)
+    title('Item Difficulty Deviation')
+    box on
+    grid on
+    hold off
+
+    %plot item difficulty selected
+    diff_selected = item_difficulty(trial_idx_selected);
+
+    figure
+    plot(mean(mean(diff_selected(:,:,10:current_test_length),3)),'LineWidth',5)
+    ylabel('Mean Item Difficulty','FontSize',32);
+    xlabel('Θ','FontSize',24);
+    set(gca,'FontSize',32,'LineWidth',2)
+    title('Item Difficulty across Theta')
+    box on
+    grid on
+    hold off
+end
+%% Check results for different levels of theta
 th_model = th_est(:,:,current_test_length);
 th_model = th_model(:);
 th_temp = th(:);
 i = 1;
 for k = theta_low:theta_high
     idx = find(th_temp>k & th_temp<k+1);
-    sd(i) = std(th_temp(idx) - th_model(idx));
+    sd_theta(i) = std(th_temp(idx) - th_model(idx));
+    mean_theta(i) = mean(th_temp(idx) - th_model(idx));
     groupN(i) = length(idx);
     i = i+1;
 end
 
 figure
 hold on
-plot(sd,'LineWidth',5)
-ylabel('Standard Deviation','FontSize',32);
+plot([mean_theta',sd_theta'],'LineWidth',5)
+ylabel('Metric','FontSize',32);
 xlabel('Theta','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2,'XTick',1:length(theta_low:theta_high),...
     'XTickLabel',theta_low:theta_high)
-title('SD for different theta values')
+title('Mean and SD for different theta values')
 box on
 grid on
+legend({'Mean','SD'},'Location','best')
 hold off
