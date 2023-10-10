@@ -8,7 +8,7 @@ track = trial_info{:,end};
 trialN = length(item_difficulty);
 experiment = 1;
 use_only_fixed_difficulty = 0;
-starting_item_difficulty = [-1 1 0 -2 2 3 -3];
+starting_item_difficulty = [1 -1];
 %% Create probability of correct and wrong sample answers
 theta_step = 0.02;
 theta_low = -5;
@@ -19,6 +19,7 @@ k=1;
 for th = theta_range
     for j = 1:trialN
         p_correct(j,k) = guessing+(1-guessing)*(1/(1+exp(-(th-rasch_mirt{j,2}))));
+        p_star(j,k) = 1/(1+exp(-(th-rasch_mirt{j,2})));
         p_incorrect(j,k) = 1-p_correct(j,k);
         product = p_correct(j,k)*p_incorrect(j,k);
         if k>1
@@ -35,7 +36,7 @@ current_test_length = 20;
 start_difficulty = 0;
 optimizer = 1; %1 fixed difficulty, 2 ml optimizer
 %simulation parameters
-permutations = 10;
+permutations = 1;
 N = 1000;
 
 %data matrices
@@ -55,6 +56,7 @@ optimizer_history = nan(permutations,N,test_length);
 response_accuracy = nan(permutations,N);
 deviation_from_item_difficulty = nan(permutations,N,test_length);
 compare_information_vs_it = nan(permutations,N,test_length);
+participant_responses = nan(permutations,N,test_length);
 %% Test simulation
 for p = 1:permutations
     disp(['Permutation: ' num2str(p)]);
@@ -134,10 +136,10 @@ for p = 1:permutations
             end
             if epoch>1
                 [th_est(p,k,epoch), th_est_idx] = ml_optimizer(th_est(p,k,epoch-1),optimizer,...
-                    responses,trial_idx,p_correct,p_incorrect,th(p,k));
+                    responses,trial_idx,p_star,p_incorrect,th(p,k));
             else
                 [th_est(p,k,epoch), th_est_idx] = ml_optimizer(th_est(p,k,epoch),optimizer,...
-                    responses,trial_idx,p_correct,p_incorrect,th(p,k));
+                    responses,trial_idx,p_star,p_incorrect,th(p,k));
             end
             if isnan(th_est(p,k,epoch)) | isempty(th_est_idx)
                 keyboard
@@ -146,26 +148,39 @@ for p = 1:permutations
             epoch = epoch+1;
         end
         response_accuracy(p,k) = mean(responses);
+        participant_responses(p,k,:) = responses;
         emotion_history(p,k,:) = emo_strat;
         trial_idx_selected(p,k,:) = trial_idx;
         track110(p,k,:) = track_selected;
     end
 end
-%% Evaluate simulation results
-%distribution of generated abilities
-figure
-hist(th(:))
-set(gca,'FontSize',32,'LineWidth',2)
-title('Distribution of generated participants ability')
-box on
-xlabel('Θ')
-grid on
-hold off
+%% Compare optimizer with Aggregate Difficulty Scores
+difficulty_scores = rescale(item_difficulty);
+
+for p = 1:permutations
+    for k = 1:N
+        for e = 1:test_length
+            correct_score = 0;
+            incorrect_score = 0;
+            if ~isempty(find(participant_responses(p,k,1:e)))
+                correct_idx = find(participant_responses(p,k,1:e));
+                correct_score = sum(difficulty_scores(trial_idx_selected(p,k,correct_idx)));
+            end
+            if ~isempty(find(participant_responses(p,k,1:e)==0))
+                incorrect_idx = find(participant_responses(p,k,1:e)==0);
+                incorrect_score = sum(difficulty_scores(trial_idx_selected(p,k,incorrect_idx)));
+                ads(p,k,e) = (correct_score-incorrect_score)/e;
+            end
+        end
+    end
+end
 
 %get mean error and corr of th and th_est
 for i = 1:test_length
     th_model = th_est(:,:,i);
+    ads_model = ads(:,:,i);
     rho(i) = corr(th_model(:),th(:),'rows','pairwise');
+    rho_ads(i) = corr(ads_model(:),th(:),'rows','pairwise');
     mae(:,i) = th(:) - th_model(:);
     deviation = mean(deviation_from_ground_truth(:,:,1:i),3);
     rho_div(i) = corr(deviation(:),th_model(:),'rows','pairwise');
@@ -179,21 +194,33 @@ for i = 1:test_length
     [bdev2(i,:),~,~,~,stats] = regress(th(:),[th_model(:),deviation(:),ones(numel(th_model),1)]);
     r_sq_dev2(i) = stats(1);
 end
+%% Plots
+%distribution of generated abilities
+figure
+histogram(th(:),theta_low:theta_high)
+set(gca,'FontSize',32,'LineWidth',2)
+title('Distribution of generated participants ability')
+box on
+xlabel('Θ')
+grid on
+hold off
 
 figure
 hold on
-plot(dev_mean,'LineWidth',5)
+plot([dev_mean',dev2_mean'],'LineWidth',5)
 ylabel('Mean Deviation','FontSize',32);
 xlabel('Test Length','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2)
 xlim([1 size(rho,2)])
 xline(current_test_length,'LineWidth',5)
 title('Deviation from ground truth')
+legend({'Deviation (Correct-Incorrect)','Deviation (Incorrect only)'},'Location','best')
 box on
 grid on
 hold off
 
 figure
+subplot(1,2,1)
 hold on
 plot(rho,'LineWidth',5)
 ylabel('Correlation Coefficient','FontSize',32);
@@ -201,13 +228,26 @@ xlabel('Test Length','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2)
 xlim([1 size(rho,2)])
 xline(current_test_length,'LineWidth',5)
-title('Correlation of true ability and test estimate')
+title('True ability and ML Optimizer')
+box on
+grid on
+hold off
+
+subplot(1,2,2)
+hold on
+plot(rho_ads,'LineWidth',5)
+ylabel('Correlation Coefficient','FontSize',32);
+xlabel('Test Length','FontSize',24);
+set(gca,'FontSize',32,'LineWidth',2)
+xlim([1 size(rho,2)])
+xline(current_test_length,'LineWidth',5)
+title('True ability and Aggregate Difficulty Scores')
 box on
 grid on
 hold off
 
 figure
-hist(mae(:,current_test_length))
+histogram(mae(:,current_test_length),theta_low:theta_high)
 set(gca,'FontSize',32,'LineWidth',2)
 title(['Mean Error of θ-θhat for Trial Length = ', num2str(current_test_length)])
 box on
@@ -223,7 +263,7 @@ xlabel('Test Length','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2)
 xlim([1 size(rho,2)])
 xline(current_test_length,'LineWidth',5)
-title('Standard deviation of θ-θhat')
+title('Mean Error')
 box on
 grid on
 hold off
@@ -272,7 +312,7 @@ if experiment==2
     ylabel('Mean Deviation','FontSize',32);
     xlabel('Θ','FontSize',24);
     set(gca,'FontSize',32,'LineWidth',2)
-    title('Item Difficulty Deviation')
+    title('Item Difficulty Deviation ')
     box on
     grid on
     hold off

@@ -1,5 +1,5 @@
-function [th, th_idx] = ml_optimizer(th,type,u,j,p_correct,p_incorrect,th_true)
-optimizer = @(th_idx,u,j) sum(u-p_correct(j,th_idx)')/(-sum(p_correct(j,th_idx)'.*p_incorrect(j,th_idx)'));
+function [th, th_idx] = ml_optimizer(th,type,u,j,p_star,p_incorrect,th_true)
+guessing = 0.5;
 init_th = 0; %initial starting point of theta
 min_criterion = 0.02; %optimizer stops if Δθ < criterion
 n_iter = 500; %number of iterations before manual stop
@@ -35,7 +35,11 @@ if type==2
         if isempty(th_idx)
             keyboard
         end
-        delta_th = optimizer(th_idx,u,j);
+        %optimizer = @(th_idx,u,j) sum(u-(guessing+(1-guessing).* p_correct(j,th_idx))')/(-sum(p_correct(j,th_idx)'.*p_incorrect(j,th_idx)'));
+        p_correct = (guessing+(1-guessing).*p_star(j,th_idx))';
+        numerator = sum((u-p_correct) .* (p_star(j,th_idx)'./p_correct));
+        denominator = sum(-(p_correct.*(1-p_correct).* (p_star(j,th_idx)'./p_correct).^2));
+        delta_th = numerator./denominator;
         th = th-delta_th;
         iter = iter+1;
     end
