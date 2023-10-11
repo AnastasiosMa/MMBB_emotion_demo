@@ -6,13 +6,13 @@ item_difficulty = rasch_mirt{:,2};
 item_emo = trial_info{:,2};
 track = trial_info{:,end};
 trialN = length(item_difficulty);
-experiment = 1;
+experiment = 2;
 use_only_fixed_difficulty = 0;
 starting_item_difficulty = [1 -1];
 %% Create probability of correct and wrong sample answers
-theta_step = 0.02;
-theta_low = -5;
-theta_high = 5;
+theta_step = 0.01;
+theta_low = -6;
+theta_high = 6;
 theta_range = round(theta_low:theta_step:theta_high,2);
 guessing = 0.5;
 k=1;
@@ -31,12 +31,12 @@ for th = theta_range
 end
 information_test(:,1) =  information_test(:,2);
 %% Test Parameters
-test_length = 50;
+test_length = 30;
 current_test_length = 20;
 start_difficulty = 0;
 optimizer = 1; %1 fixed difficulty, 2 ml optimizer
 %simulation parameters
-permutations = 1;
+permutations = 10;
 N = 1000;
 
 %data matrices
@@ -120,13 +120,7 @@ for p = 1:permutations
             if responses(epoch)
                 deviation_from_ground_truth(p,k,epoch) = p_incorrect(trial_idx(epoch),th_idx);
             else
-                deviation_from_ground_truth(p,k,epoch) = p_correct(trial_idx(epoch),th_idx);
-            end
-
-            if p_correct(trial_idx(epoch),th_idx)>0.5 & ~responses(epoch)
-                deviation_mistakes_only(p,k,epoch) = p_correct(trial_idx(epoch),th_idx);
-            else
-                deviation_mistakes_only(p,k,epoch) = 0;
+                deviation_from_ground_truth(p,k,epoch) = -p_correct(trial_idx(epoch),th_idx);
             end
             %check for optimizer change
             if all(responses) | all(~responses)
@@ -183,39 +177,42 @@ for i = 1:test_length
     rho_ads(i) = corr(ads_model(:),th(:),'rows','pairwise');
     mae(:,i) = th(:) - th_model(:);
     deviation = mean(deviation_from_ground_truth(:,:,1:i),3);
+    deviation_low = deviation<0.5; deviation_high = deviation>=0.5;
     rho_div(i) = corr(deviation(:),th_model(:),'rows','pairwise');
     dev_mean(i) = mean(mean(deviation));
-    [b(i,:),~,~,~,stats] = regress(th(:),[th_model(:),deviation(:),ones(numel(th_model),1)]);
-    r_sq_dev1(i) = stats(1);
-    %deviation mistakes only
-    deviation = mean(deviation_mistakes_only(:,:,1:i),3);
-    rho_dev2(i) = corr(deviation(:),th_model(:),'rows','pairwise');
-    dev2_mean(i) = mean(mean(deviation));
-    [bdev2(i,:),~,~,~,stats] = regress(th(:),[th_model(:),deviation(:),ones(numel(th_model),1)]);
-    r_sq_dev2(i) = stats(1);
+    [b(i,:),~,~,~,stats] = regress(rescale(th(:)),[rescale(th_model(:)),rescale(deviation(:)),ones(numel(th_model),1)]);
+    %[b(i,:),~,~,~,stats] = regress(rescale(th(:)),[rescale(th_model(:)),deviation_low(:),ones(numel(th_model),1)]);
+    r_sq_dev(i) = stats(1);
 end
 %% Plots
 %distribution of generated abilities
 figure
+subplot(1,2,1)
 histogram(th(:),theta_low:theta_high)
 set(gca,'FontSize',32,'LineWidth',2)
-title('Distribution of generated participants ability')
+title('Generated participants ability')
+box on
+xlabel('Θ')
+grid on
+hold off
+
+subplot(1,2,2)
+histogram(th_est(:,:,current_test_length),theta_low:theta_high)
+set(gca,'FontSize',32,'LineWidth',2)
+title('Optimizer participants ability')
 box on
 xlabel('Θ')
 grid on
 hold off
 
 figure
-hold on
-plot([dev_mean',dev2_mean'],'LineWidth',5)
-ylabel('Mean Deviation','FontSize',32);
-xlabel('Test Length','FontSize',24);
+deviation = mean(deviation_from_ground_truth(:,:,current_test_length),3);
+histogram(deviation(:))
 set(gca,'FontSize',32,'LineWidth',2)
-xlim([1 size(rho,2)])
-xline(current_test_length,'LineWidth',5)
 title('Deviation from ground truth')
-legend({'Deviation (Correct-Incorrect)','Deviation (Incorrect only)'},'Location','best')
 box on
+xlabel('Deviation')
+ylabel('Count')
 grid on
 hold off
 
@@ -247,6 +244,21 @@ grid on
 hold off
 
 figure
+hold on
+plot(r_sq_dev,'LineWidth',5)
+plot(b(:,1),'LineWidth',5)
+ylabel('Estimate','FontSize',32);
+xlabel('Test Length','FontSize',24);
+set(gca,'FontSize',32,'LineWidth',2)
+xlim([1 size(rho,2)])
+xline(current_test_length,'LineWidth',5)
+title('R Square: θ(sim) = b1*θ(opt) + b2*deviation')
+legend('R Square','b1','Location','best')
+box on
+grid on
+hold off
+
+figure
 histogram(mae(:,current_test_length),theta_low:theta_high)
 set(gca,'FontSize',32,'LineWidth',2)
 title(['Mean Error of θ-θhat for Trial Length = ', num2str(current_test_length)])
@@ -258,12 +270,12 @@ hold off
 figure
 hold on
 plot(mean(mae),'LineWidth',5)
-ylabel('Mean error (θ-θ hat)','FontSize',32);
+ylabel('Mean error','FontSize',32);
 xlabel('Test Length','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2)
 xlim([1 size(rho,2)])
 xline(current_test_length,'LineWidth',5)
-title('Mean Error')
+title('Mean error (θ-θ hat)')
 box on
 grid on
 hold off
@@ -298,7 +310,7 @@ xlabel('Test Length','FontSize',24);
 set(gca,'FontSize',32,'LineWidth',2)
 xlim([1 length(op_mean)])
 xline(current_test_length,'LineWidth',5)
-title('Optimizer2/Fixed Difficulty')
+title('Optimizer/Fixed Difficulty')
 box on
 grid on
 hold off
@@ -355,3 +367,22 @@ box on
 grid on
 legend({'Mean','SD'},'Location','best')
 hold off
+%
+%% Check big mistakes
+p = 1; %choose a permutation
+th_model = th_est(p,:,current_test_length);
+[~,i] = sort(th(p,:)-th_model(:)'); %find biggest mistakes;
+th(p,i(1))-th_model(p,i(1))
+%data from biggest mistake
+p_resp = participant_responses(p,i(1),1:current_test_length);
+trial_id = trial_idx_selected(p,i(1),1:current_test_length);
+t = th_est(p,i(1),1:current_test_length);
+if th(p,i(1))<=theta_low
+    th_idx = 1;
+elseif th(p,i(1))>=theta_high
+    th_idx = length(theta_range);
+else
+    th_idx = find(th(p,i(1))<=theta_range+theta_step & th(p,i(1))>theta_range);
+end
+d = [item_difficulty(trial_id(:)),trial_id(:),p_resp(:),t(:),p_correct(trial_id(:),th_idx)]
+th(p,i(1))
