@@ -2,15 +2,16 @@
 trial_info = readtable('../data/output/binary_responses/final_trial_info.csv');
 rasch_mirt = readtable('../data/output/binary_responses/irt_models/final_rasch_mirt.csv');
 participant_scores = readtable('../data/output/binary_responses/irt_models/participantScores.csv');
+emoNames = {'Angry','Fearful','Happy','Sad','Tender'};
 item_difficulty = rasch_mirt{:,2};
 item_emo = trial_info{:,2};
 track = trial_info{:,end};
 trialN = length(item_difficulty);
-experiment = 2;
+experiment = 1;
 use_only_fixed_difficulty = 0;
 starting_item_difficulty = [1 -1];
 %% Create probability of correct and wrong sample answers
-theta_step = 0.01;
+theta_step = 0.02;
 theta_low = -6;
 theta_high = 6;
 theta_range = round(theta_low:theta_step:theta_high,2);
@@ -36,7 +37,7 @@ current_test_length = 20;
 start_difficulty = 0;
 optimizer = 1; %1 fixed difficulty, 2 ml optimizer
 %simulation parameters
-permutations = 10;
+permutations = 100;
 N = 1000;
 
 %data matrices
@@ -74,16 +75,13 @@ for p = 1:permutations
         for i = 1:test_length/5
             emo_strat = [emo_strat randperm(5)];
         end
-        %find start trial at difficulty 0
-        [~,start_trial_candidates] = sort(abs(item_difficulty(find(item_emo==emo_strat(1)))));
-        trial_idx(epoch) = start_trial_candidates(randi(4,1));
         %find th_idx of TRUE ABILITY
         if th(p,k)<=theta_low
             th_idx = 1;
         elseif th(p,k)>=theta_high
             th_idx = length(theta_range);
         else
-            th_idx = find(th(p,k)<=theta_range+theta_step & th(p,k)>theta_range);
+            th_idx = find(th(p,k)<=round(theta_range+theta_step,2) & th(p,k)>theta_range);
         end
         %set th_est =0
         th_est_idx = round(length(theta_range)/2);
@@ -110,7 +108,7 @@ for p = 1:permutations
                 end
                 trial_candidates = trial_candidates(randperm(length(trial_candidates)));
                 [~,min_dist] = sort(abs(starting_item_difficulty(epoch) - item_difficulty(trial_candidates)));
-                trial_idx(epoch) = trial_candidates(min_dist(randi(4,1)));
+                trial_idx(epoch) = trial_candidates(min_dist(randi(5,1)));
             end
             deviation_from_item_difficulty(p,k,epoch) = th(p,k)-item_difficulty(trial_idx(epoch));
             track_selected(epoch) = track(trial_idx(epoch));
@@ -129,9 +127,15 @@ for p = 1:permutations
                 optimizer = 2;
             end
             if epoch>1
+                if isempty(th_est(p,k,epoch))
+                    keyboard
+                end
                 [th_est(p,k,epoch), th_est_idx] = ml_optimizer(th_est(p,k,epoch-1),optimizer,...
                     responses,trial_idx,p_star,p_incorrect,th(p,k));
             else
+                if isempty(th_est(p,k,epoch))
+                    keyboard
+                end
                 [th_est(p,k,epoch), th_est_idx] = ml_optimizer(th_est(p,k,epoch),optimizer,...
                     responses,trial_idx,p_star,p_incorrect,th(p,k));
             end
@@ -177,12 +181,12 @@ for i = 1:test_length
     rho_ads(i) = corr(ads_model(:),th(:),'rows','pairwise');
     mae(:,i) = th(:) - th_model(:);
     deviation = mean(deviation_from_ground_truth(:,:,1:i),3);
-    deviation_low = deviation<0.5; deviation_high = deviation>=0.5;
     rho_div(i) = corr(deviation(:),th_model(:),'rows','pairwise');
     dev_mean(i) = mean(mean(deviation));
     [b(i,:),~,~,~,stats] = regress(rescale(th(:)),[rescale(th_model(:)),rescale(deviation(:)),ones(numel(th_model),1)]);
     %[b(i,:),~,~,~,stats] = regress(rescale(th(:)),[rescale(th_model(:)),deviation_low(:),ones(numel(th_model),1)]);
     r_sq_dev(i) = stats(1);
+    item_dev(i) = mean(mean(deviation_from_item_difficulty(:,:,i)));
 end
 %% Plots
 %distribution of generated abilities
@@ -206,7 +210,7 @@ grid on
 hold off
 
 figure
-deviation = mean(deviation_from_ground_truth(:,:,current_test_length),3);
+deviation = mean(deviation_from_ground_truth(:,:,1:current_test_length),3);
 histogram(deviation(:))
 set(gca,'FontSize',32,'LineWidth',2)
 title('Deviation from ground truth')
@@ -315,6 +319,19 @@ box on
 grid on
 hold off
 
+figure
+hold on
+plot(item_dev,'LineWidth',5)
+ylabel('Deviation','FontSize',32);
+xlabel('Test Length','FontSize',24);
+set(gca,'FontSize',32,'LineWidth',2)
+xlim([1 size(rho,2)])
+xline(current_test_length,'LineWidth',5)
+title('Mean θ-b across Test Length')
+box on
+grid on
+hold off
+
 if experiment==2
     for i =15:test_length
         item_dif_dev{i} = mean(deviation_from_item_difficulty(:,:,15:i),3);
@@ -356,7 +373,6 @@ for k = theta_low:theta_high
 end
 
 figure
-hold on
 plot([mean_theta',sd_theta'],'LineWidth',5)
 ylabel('Metric','FontSize',32);
 xlabel('Theta','FontSize',24);
@@ -366,8 +382,30 @@ title('Mean and SD for different theta values')
 box on
 grid on
 legend({'Mean','SD'},'Location','best')
-hold off
-%
+
+%deviation across theta
+deviation = deviation_from_ground_truth(:,:,current_test_length);
+deviation = deviation(:);
+th_temp = th(:);
+i = 1;
+for k = theta_low:theta_high
+    idx = find(th_temp>k & th_temp<k+1);
+    positive_deviation(i) = sum(deviation(idx)>0)/length(idx);
+    negative_deviation(i) = sum(deviation(idx)<-0.5)/length(idx);
+    groupN(i) = length(idx);
+    i = i+1;
+end
+
+figure
+plot([positive_deviation',negative_deviation'],'LineWidth',5)
+ylabel('Metric','FontSize',32);
+xlabel('Deviation from ground truth','FontSize',24);
+set(gca,'FontSize',32,'LineWidth',2,'XTick',1:length(theta_low:theta_high),...
+    'XTickLabel',theta_low:theta_high)
+title('Positive and negative deviationfor different theta values')
+box on
+grid on
+legend({'Positive Dev','Negative Dev'},'Location','best')
 %% Check big mistakes
 p = 1; %choose a permutation
 th_model = th_est(p,:,current_test_length);
@@ -384,5 +422,64 @@ elseif th(p,i(1))>=theta_high
 else
     th_idx = find(th(p,i(1))<=theta_range+theta_step & th(p,i(1))>theta_range);
 end
-d = [item_difficulty(trial_id(:)),trial_id(:),p_resp(:),t(:),p_correct(trial_id(:),th_idx)]
+d = [item_difficulty(trial_id(:)),trial_id(:),p_resp(:),t(:),p_correct(trial_id(:),th_idx)];
 th(p,i(1))
+%check deviations
+tl = 2; %test length
+p_resp = squeeze(participant_responses(p,:,1:tl));
+i = find(p_resp(:,1) == 1 & p_resp(:,2) == 0);
+trial_id = trial_idx_selected(p,i(1),1:tl);
+dev = deviation_from_ground_truth(p,i(1),1:tl);
+t = th_est(p,i(1),1:tl);
+if th(p,i(1))<=theta_low
+    th_idx = 1;
+elseif th(p,i(1))>=theta_high
+    th_idx = length(theta_range);
+else
+    th_idx = find(th(p,i(1))<=theta_range+theta_step & th(p,i(1))>theta_range);
+end
+d = [dev(:),item_difficulty(trial_id(:)),trial_id(:),p_resp(i(1),1:tl)',t(:),p_correct(trial_id(:),th_idx)];
+th(p,i(1))
+%% Check distribution (number of appearances) of all items
+items_selected = trial_idx_selected(:,:,1:current_test_length);
+items_selected = items_selected(:);
+[item_frequency, gr] = groupcounts(items_selected);
+
+m = max(groupcounts(item_emo));
+gc = groupcounts(item_emo)/m;
+
+figure
+hold on
+scatter(item_difficulty(gr),item_frequency,100,'filled');
+set(gca,'FontSize',32,'LineWidth',2)
+xlabel('Item Difficulty');
+ylabel('Number of occurences');
+title('Occurences per item')
+yline(mean(item_frequency),'-',{'Mean Occurence'},'LineWidth',5)
+yline(median(item_frequency),'-',{'Median Occurence'},'LineWidth',5)
+box on
+grid on
+
+figure
+gscatter(item_difficulty(gr),item_frequency,item_emo(gr),lines(length(unique(item_emo))),'..',35);
+set(gca,'FontSize',32,'LineWidth',2)
+xlabel('Item Difficulty');
+ylabel('Number of occurences');
+title('Occurences per item')
+yline(mean(item_frequency),'-',{'Mean Occurence'},'LineWidth',5)
+yline(median(item_frequency),'-',{'Median Occurence'},'LineWidth',5)
+legend(emoNames,'Location','best')
+box on
+grid on
+
+figure
+gscatter(item_difficulty(gr),item_frequency.*gc(item_emo(gr)),item_emo(gr),lines(length(unique(item_emo))),'..',35);
+set(gca,'FontSize',32,'LineWidth',2)
+xlabel('Item Difficulty');
+ylabel('Number of occurences');
+title('Occurences per item (Adjusted per emotion)')
+yline(mean(item_frequency),'-',{'Mean Occurence'},'LineWidth',5)
+yline(median(item_frequency),'-',{'Median Occurence'},'LineWidth',5)
+legend(emoNames,'Location','best')
+box on
+grid on

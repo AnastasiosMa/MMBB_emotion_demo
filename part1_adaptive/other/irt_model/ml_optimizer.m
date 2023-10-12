@@ -1,11 +1,11 @@
 function [th, th_idx] = ml_optimizer(th,type,u,j,p_star,p_incorrect,th_true)
 guessing = 0.5;
 init_th = 0; %initial starting point of theta
-min_criterion = 0.01; %optimizer stops if Δθ < criterion
+min_criterion = 0.02; %optimizer stops if Δθ < criterion
 n_iter = 1000; %number of iterations before manual stop
 theta_low = -6;
 theta_high = 6;
-theta_step = 0.01;
+theta_step = 0.02;
 theta_range = round(theta_low:theta_step:theta_high,2);
 delta_th = 1;
 diffulty_change = 1;
@@ -30,7 +30,10 @@ if type==2
             end
         else
             %find discrete index for theta within range
-            th_idx = find(th<=theta_range+theta_step & th>theta_range);
+            th_idx = find(th<=round(theta_range+theta_step,2) & th>theta_range);
+            if isempty(th_idx)
+            keyboard
+        end
             th = theta_range(th_idx)+theta_step/2;
         end
         if isempty(th_idx)
