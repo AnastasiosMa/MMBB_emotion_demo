@@ -10,7 +10,6 @@ trialN = length(item_difficulty);
 experiment = 2;
 use_only_fixed_difficulty = 0;
 starting_item_difficulty = [1 -1];
-export_data = 0;
 %% Create probability of correct and wrong sample answers
 theta_step = 0.02;
 theta_low = -6;
@@ -484,17 +483,3 @@ yline(median(item_frequency),'-',{'Median Occurence'},'LineWidth',5)
 legend(emoNames,'Location','best')
 box on
 grid on
-
-%% export data matrices
-example(1) = prctile(item_difficulty,25);
-example(2) = prctile(item_difficulty,45);
-
-idx_1 = find(item_emo==5);
-idx_2 = find(item_emo==2);
-
-[~,min_dist] = min(abs(example(1) - item_difficulty(idx_1)));
-example_idx(1) = idx_1(min_dist);
-
-[~,min_dist] = min(abs(example(2) - item_difficulty(idx_2)));
-example_idx(2) = idx_2(min_dist);
-        
