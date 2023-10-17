@@ -9,13 +9,24 @@ item_emo = trial_info{:,2};
 track = trial_info{:,end};
 trialN = length(item_difficulty);
 starting_item_difficulty = [1 -1];
-%% export item table
+%% create table, remove examples from data
+%construct trial table
+for i = 1:trialN
+target_emo(i) = mean_scores{track(i),emo_idxs(item_emo(i))};
+soundtrack(i) = mean_scores{track(i),end-1};
+end
+trial_info.Properties.VariableNames = {'Label','Label1','Label2','Trials','Track110'};
+
+trial_info.Difficulty = item_difficulty;
+trial_info.TargetEmo= target_emo';
+trial_info.Soundtrack= soundtrack';
+
+%find example trials
 example(1) = prctile(item_difficulty,25);
 example(2) = prctile(item_difficulty,45);
 
 idx_1 = find(item_emo==5);
 idx_2 = find(item_emo==4);
-%find example trials
 [~,min_dist] = min(abs(example(1) - item_difficulty(idx_1)));
 example_idx(1) = idx_1(min_dist);
 [~,min_dist] = min(abs(example(2) - item_difficulty(idx_2)));
@@ -25,21 +36,7 @@ example_data = trial_info(example_idx,:);
 %remove example trials from data
 trial_info(example_idx,:) = []; 
 rasch_mirt(example_idx,:)  = [];
-item_difficulty = rasch_mirt{:,2};
-item_emo = trial_info{:,2};
-track = trial_info{:,end};
-trialN = length(item_difficulty);
-
-%construct trial table
-for i = 1:trialN
-target_emo(i) = mean_scores{track(i),item_emo(i)};
-soundtrack(i) = mean_scores{track(i),end-1};
-end
-trial_info.Properties.VariableNames = {'Label','Label1','Label2','Trials','Track110'};
-trial_info.Difficulty = item_difficulty;
-trial_info.TargetEmo= target_emo';
-trial_info.Soundtrack= soundtrack';
-
+trialN = height(trial_info);
 %% export data matrices
 theta_step = 0.02;
 theta_low = -6;
@@ -65,6 +62,15 @@ information_test(:,1) =  information_test(:,2);
 json_p_star = jsonencode(p_star');
 json_information = jsonencode(information_test');
 
+%save examples
+for i = 1:size(example_data,2)
+    e{i} = example_data{:,i};
+end
+json_e = jsonencode(e);
+fid = fopen('../data/output/binary_responses/cat_data/example_info.json','w');
+fprintf(fid,'%s',json_e);
+fclose(fid);
+
 %save pstar
 fid = fopen('../data/output/binary_responses/cat_data/pstar.json','w');
 fprintf(fid,'%s',json_p_star);
@@ -75,9 +81,6 @@ fid = fopen('../data/output/binary_responses/cat_data/information.json','w');
 fprintf(fid,'%s',json_information);
 fclose(fid);
 
-Xc = rows2vars(trial_info);
-Xc = Xc(:,2:end);
-json_trial_info = jsonencode(trial_info);
 for i = 1:size(trial_info,2)
     t{i} = trial_info{:,i};
 end
