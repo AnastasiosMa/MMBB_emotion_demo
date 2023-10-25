@@ -22,8 +22,8 @@ trial_info.TargetEmo= target_emo';
 trial_info.Soundtrack= soundtrack';
 
 %find example trials
-example(1) = prctile(item_difficulty,25);
-example(2) = prctile(item_difficulty,45);
+example(1) = prctile(item_difficulty,20);
+example(2) = prctile(item_difficulty,35);
 
 idx_1 = find(item_emo==5);
 idx_2 = find(item_emo==4);
