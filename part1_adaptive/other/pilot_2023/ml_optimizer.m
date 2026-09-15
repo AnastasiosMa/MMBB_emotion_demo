@@ -1,10 +1,10 @@
-function [th, th_idx,iter] = ml_optimizer(th,type,u,j,p_star,p_incorrect,th_true)
+function [th, th_idx,iter] = ml_optimizer(th,type,u,j,p_star,p_incorrect)
 guessing = 0.5;
 init_th = 0; %initial starting point of theta
 min_criterion = 0.02; %optimizer stops if Δθ < criterion
 n_iter = 1000; %number of iterations before manual stop
-theta_low = -5;
-theta_high = 5;
+theta_low = -6;
+theta_high = 6;
 theta_step = 0.02;
 theta_range = round(theta_low:theta_step:theta_high,2);
 delta_th = 1;

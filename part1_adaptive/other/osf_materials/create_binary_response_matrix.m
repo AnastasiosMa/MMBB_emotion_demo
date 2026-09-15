@@ -1,4 +1,5 @@
 %% Create binary response matrix from Spanish and Finnish data
+% REQUIRES DATA FILES FROM STUDY 1: https://github.com/tuomaseerola/soundtracks/
 emo_labels = {'Angry','Fearful','Happy','Sad','Tender'};
 excerpts_to_remove = [17,18,67,72,75,82,86,95,101];
 exclude_trials_threshold = 10; %prctile to exclude trials
@@ -157,10 +158,10 @@ trial_info = trial_info(i,:);
 %writetable(trial_info,'../data/output/binary_responses/fear_trial_info.csv');
 %% Prepare data for exporting (SECONDARY mean items)
 %Item Thresholds
-upper_thx = 0.8;
 min_mean_rating = 3;
 
 secondary_binary_responses_t = array2table(secondary_binary_responses);
+upper_thx = 0.8;
 %create trial info table
 second_trial_name = 1:size(secondary_binary_responses_t,2);
 %get target emotion
@@ -184,7 +185,6 @@ second_trial_info = table(second_labels(:),second_emo(:),second_incorrect_emo(:)
     'ComparisonEmo','TrialNum','Track110'});
 
 second_emotion_raiting = repmat(second_emotion(idx)',1,emo_N-2)';
-%remove trials 0.75<x<1
 d = nanmean(secondary_binary_responses_t{:,1:end});
 i = find([d>0.5 & d<upper_thx] & [second_emotion_raiting(:)>min_mean_rating]');
 secondary_binary_responses_t = secondary_binary_responses_t(:,i);
@@ -214,7 +214,6 @@ third_trial_info = table(third_labels(:),third_emo(:),third_incorrect_emo(:),...
     'ComparisonEmo','TrialNum','Track110'});
 
 third_emotion_raiting = repmat(third_emotion(idx)',1,emo_N-3)';
-%remove trials 0.75<x<1
 d = nanmean(third_binary_responses_t{:,1:end});
 i = find([d>0.5 & d<upper_thx] & [third_emotion_raiting(:)>min_mean_rating]');
 third_binary_responses_t = third_binary_responses_t(:,i);

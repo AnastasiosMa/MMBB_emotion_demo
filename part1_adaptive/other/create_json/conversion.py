@@ -6,7 +6,7 @@ from datetime import datetime
 now = datetime.now()
 timestamp = now.strftime("%Y%m%d%H%M%S")
 
-CSV_FILEPATH = "assets/trials.csv"
+CSV_FILEPATH = "assets/newtrials.csv"
 JSON_OUTPUTFILE = "assets/trials_" + timestamp + ".json"
 EXPECTED_COLUMN_NAMES = ['Label','Name','TargetEmo','ComparisonEmo','Distance','Label1','Label2',
                          'Soundtrack','Level','Trials']

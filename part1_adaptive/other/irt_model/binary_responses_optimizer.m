@@ -62,7 +62,7 @@ n_iter = 100; %number of iterations before manual stop
 iterations = nan(max_item_N,n_iter);
 optimizer_training_history = cell(size(data,1),500);
 optimizer_weight_adjustment_history = cell(size(data,1),500);
-for permutations = 1:100
+for permutations = 1:10
     disp(permutations)
     perms = randperm(size(data,2));
     for participant = 1:size(data,1) %per participant
@@ -116,7 +116,7 @@ n_iter = 100; %number of iterations before manual stop
 %timings = nan(size(data,1),size(data,2));
 iterations = nan(max_item_N,n_iter);
 optimizer2_training_history = cell(size(data,1),500);
-for permutations = 1:100
+for permutations = 1:10
     disp(permutations)
     perms = randperm(size(data,2));
     for participant = 1:size(data,1) %per participant

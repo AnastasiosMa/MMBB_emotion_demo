@@ -12,10 +12,10 @@ N = size(data,1);
 emoNames = {'Angry','Fearful','Happy','Sad','Tender'};
 guessing = 0.5;
 %% Remove items with outlier values
-idx_infit = find(infit_values{:,2}<=0.5 | infit_values{:,2}>=1.5);
+idx_outfit = find(infit_values{:,2}<=0.5 | infit_values{:,2}>=1.5);
 %remove items with outlier Thetas
 idx_theta = find(rasch_mirt{:,2}<-5 | rasch_mirt{:,2}>5);
-idx = unique([idx_theta; idx_infit]);
+idx = unique([idx_theta; idx_outfit]);
 
 disp(['Items excluded:' num2str(length(idx))])
 rasch_mirt = rasch_mirt(setdiff([1:size(data,2)],idx),:);
@@ -36,11 +36,12 @@ for k = 1:N
         P_hat(k,j) = guessing+(1-guessing)*(1/(1+exp(-(participant_scores{k,1}-rasch_mirt{j,2}))));
     end
 end
+
 y = table2array(data);
 y_non_missing_idx = find(~isnan(y(:)));
 y = y(y_non_missing_idx);
 [B,~,~,~,STATS] = regress(y,[P_hat(y_non_missing_idx),ones(length(y),1)]);
-P_binary = P_hat(y_non_missing_idx)>0.5;
+P_binary = P_hat(y_non_missing_idx)>0.75;
 accuracy_score = sum(P_binary==y)/length(y);
 disp(['Accuracy Score: ' num2str(round(accuracy_score,2))]);
 %% Accuracy plots
@@ -48,7 +49,7 @@ disp(['Accuracy Score: ' num2str(round(accuracy_score,2))]);
 for k=1:N
     y_p = data{k,:};
     y_idx = find(~isnan(y_p));
-    binary_p = P_hat(k,y_idx)>0.5;
+    binary_p = P_hat(k,y_idx)>0.75;
     accuracy_p(k) = sum(binary_p==y_p(y_idx))/length(binary_p);
 end
 
@@ -56,7 +57,7 @@ end
 for i=1:trialN
     y_p = data{:,i};
     y_idx = find(~isnan(y_p));
-    binary_p = P_hat(y_idx,i)>0.5;
+    binary_p = P_hat(y_idx,i)>0.75;
     accuracy_i(i) = sum(binary_p==y_p(y_idx))/length(binary_p);
 end
 
@@ -157,6 +158,10 @@ grid on
 %% Calculate Information and Standard error
 %rasch
 k=1;
+theta_step = 0.05;
+theta_low = -5;
+theta_high = 5;
+theta_range = round(theta_low:theta_step:theta_high,2);
 for th = theta_range
     for j = 1:trialN
         p_correct(j,k) = guessing+(1-guessing)*(1/(1+exp(-(th-rasch_mirt{j,2}))));
@@ -175,14 +180,36 @@ end
 information_test(:,1) =  information_test(:,2);
 se_test(1) = 1./sqrt(sum(information_test(:,1)));
 
+participant_sd = std(participant_scores{:,1});
+participant_mean = mean(participant_scores{:,1});
+low_th = participant_mean-1*participant_sd;
+high_th = participant_mean+1*participant_sd;
+low_th_idx = find(low_th<=round(theta_range+theta_step,2) & low_th>theta_range);
+high_th_idx = find(high_th <=round(theta_range+theta_step,2) & high_th >theta_range);
 figure
 plot([rescale(sum(information_test)/trialN);rescale(se_test)]','LineWidth',5)
 ylabel('Estimate','FontSize',32);
 xlabel('Θ','FontSize',24);
 set(gca,'XTick',1:20:length(theta_range),'XTickLabel',theta_low:theta_high)
 set(gca,'FontSize',32,'LineWidth',2)
+xline(low_th_idx,'LineWidth',4)
+xline(high_th_idx,'LineWidth',4)
 title('Test Information & Standard Error','FontSize',36)
 legend('Information','Standard Error','Location','best')
+box on
+grid on
+
+%manually choose trials of different difficulty
+i = [35,21,427];
+figure
+plot(p_correct(i,:)','LineWidth',5)
+set(gca,'FontSize',32,'LineWidth',2)
+ylabel('P(θ)')
+xlabel('Θ');
+xtickangle(0)
+set(gca,'XTick',1:20:length(theta_range),'XTickLabel',theta_low:theta_high)
+%legend({['b1 = ', num2str(round(rasch_mirt{i(1),2},2))],['b2 = ',num2str(round(rasch_mirt{i(2),2},2))],['b3 = ', num2str(round(rasch_mirt{i(3),2}),2)]},'Location','best',...
+ %   'FontSize',24)
 box on
 grid on
 %% Correlations of participants ability

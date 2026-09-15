@@ -2,11 +2,39 @@ data = readtable('../data/output/binary_responses/binary_responses.csv');
 trial_info = readtable('../data/output/binary_responses/trial_info.csv');
 trialN = size(data,2)-3;
 emoNames = {'Angry','Fearful','Happy','Sad','Tender'};
-%% Analysis of emotion types
+%% Figure 1. Item agreement distribution
 difficulty_item = mean(data{:,1:trialN},'omitnan');
+figure
+hold on
+plot(sort(difficulty_item),[1:length(difficulty_item)]/length(difficulty_item),'LineWidth',5)
+for i = 1:5
+    emo_trials = sort(difficulty_item(find(trial_info{:,2}==i)));
+    plot(emo_trials,[1:length(emo_trials)]/length(emo_trials),'LineWidth',5)
+end
+title('Cumulative Distribution of Item Agreement','FontSize',32)
+ylabel('Item Ratio','FontSize',32);
+xlabel('Item Agreement','FontSize',24);
+set(gca,'FontSize',32,'LineWidth',2)
+set(gca,'FontSize',32,'LineWidth',2)
+box on
+grid on
+legend([{'All'},emoNames],'Location','best')
+hold off
+
 X = table(trial_info{:,1},categorical(trial_info{:,2}),difficulty_item');
+emopair_cats = categorical(X.Var1);
 %regressions
 model_emopairs = fitlm(X,'Var3~Var1');
+tbl = round(table2array(model_emopairs.Coefficients),3);
+tbl = array2table(tbl,'VariableNames',model_emopairs.Coefficients.Properties.VariableNames,...
+    'RowNames',model_emopairs.CoefficientNames);
+%ohe=onehotencode(emopair_cats,2); %one hot encoded emopairs
+%model_emopairs = fitlm(ohe,X.Var3);
+%tbl = round(table2array(model_emopairs.Coefficients),3);
+%tbl = array2table(tbl,'VariableNames',model_emopairs.Coefficients.Properties.VariableNames);
+%tbl.Properties.RowNames{1} = 'Intercept'; tbl.Properties.RowNames(2:end) = categories(emopair_cats);
+%disp(tbl)
+%writetable(tbl,'~/Desktop/emopairs.csv','WriteRowNames',1)
 model_targetemo = fitlm(X,'Var3~Var2');
 %groupstats
 g_mean_target = groupsummary(X(:,[2,3]),'Var2','mean');
@@ -41,30 +69,6 @@ set(gca,'ytick',2:height(g_mean_target)+1,'yticklabels',...
 ylim([1 height(g_mean_target)+2])
 xlabel('Response Accuracy','FontSize',36)
 title('Response Accuracy across Emotions','FontSize',36)
-
-figure
-subplot(2,1,1)
-plot(sort(difficulty_item),'LineWidth',5)
-ylabel('Response accuracy','FontSize',32);
-xlabel('Items','FontSize',24);
-set(gca,'FontSize',32,'LineWidth',2)
-xlim([1 length(difficulty_item)])
-box on
-grid on
-
-subplot(2,1,2)
-hold on
-for i = 1:5
-    plot(sort(difficulty_item(find(trial_info{:,2}==i))),'LineWidth',5)
-end
-ylabel('Response accuracy','FontSize',32);
-xlabel('Items','FontSize',24);
-set(gca,'FontSize',32,'LineWidth',2)
-xlim([1 sum(trial_info{:,2}==mode(trial_info{:,2}))])
-box on
-grid on
-legend(emoNames,'Location','best')
-hold off
 %% Analysis of demographic features
 difficulty_p = mean(data{:,1:trialN}','omitnan');
 X = table(data{:,trialN+1},data{:,trialN+2},...
@@ -110,6 +114,10 @@ title(['Scatterplot of Age and Response Accuracy: r = ', num2str(round(rho,2))],
 set(gca,'FontSize',32,'LineWidth',2)
 box on
 grid on
+
+%nationality
+[h,p,~,stats] = ttest2(difficulty_p(find(strcmpi(data.Participant,'fi'))),...
+    difficulty_p(find(strcmpi(data.Participant,'spa'))))
 
 %gender
 [h,p,~,stats] = ttest2(difficulty_p(find(strcmpi(data.Gender,'Male'))),...
