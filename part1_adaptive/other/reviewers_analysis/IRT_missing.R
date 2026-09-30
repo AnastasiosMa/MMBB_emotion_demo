@@ -1,7 +1,7 @@
 library(mirt)
 library(readr)
 
-setwd("Documents/projects/github/MMBB_emotion_demo/part1_adaptive/other/reviewers_analysis/")
+setwd("Documents/projects/github/MMBB_emotion_demo/part1_adaptive/other/")
 binary_responses <- read_csv("reviewers_analysis/data/binary_responses_all.csv")
 binary_responses=binary_responses[,1:(ncol(binary_responses)-3)]
 binary_responses_missing <- read_csv("reviewers_analysis/data/binary_responses_all_missing.csv")
@@ -45,9 +45,9 @@ paramsRasch_missing <- coef(fitRasch_missing, IRTpars = TRUE, simplify = TRUE)
 
 b1 <- as.vector(paramsRasch$items[,2])
 b2 <- as.vector(paramsRasch_missing$items[,2])
-cor(b1, b2)
-cor(b1, b2, method="spearman")
-
+cat(sprintf("Difficulty correlation: r = %.3f; R-squared = %.3f\n",
+            cor(b1, b2),
+            cor(b1, b2)^2))
 plot(paramsRasch$items[,2],
      paramsRasch_missing$items[,2])
 abline(0,1,col="red")
@@ -106,8 +106,9 @@ paramsRasch_missing <- coef(fitRasch_missing, IRTpars = TRUE, simplify = TRUE)
 
 b1 <- as.vector(paramsRasch$items[,2])
 b2 <- as.vector(paramsRasch_missing$items[,2])
-cor(b1, b2)
-cor(b1, b2, method="spearman")
+cat(sprintf("Difficulty correlation: r = %.3f; R-squared = %.3f\n",
+            cor(b1, b2),
+            cor(b1, b2)^2))
 
 # Refit
 fitRasch <- mirt(binary_responses_filt2,
@@ -120,35 +121,70 @@ fitRasch_missing <- mirt(binary_responses_missing_filt2,
                          itemtype = "Rasch",
                          verbose = TRUE,guess = 0.5)
 
-#best fir for rasch and 1 dimension
-mlScores <- fscores(fitRasch, method = 'EAP')
-mlScores_missing <- fscores(fitRasch_missing, method = 'EAP')
-theta1 <- as.vector(mlScores)
-theta2 <- as.vector(mlScores_missing)
-
-cor(theta1, theta2)
-cor(theta1, theta2, method="spearman")
-
 paramsRasch <- coef(fitRasch, IRTpars = TRUE, simplify = TRUE)
 paramsRasch_missing <- coef(fitRasch_missing, IRTpars = TRUE, simplify = TRUE)
 
 b1 <- as.vector(paramsRasch$items[,2])
 b2 <- as.vector(paramsRasch_missing$items[,2])
-cor(b1, b2)
-cor(b1, b2, method="spearman")
+cat(sprintf("Difficulty correlation: r = %.3f; R-squared = %.3f\n",
+            cor(b1, b2),
+            cor(b1, b2)^2))
 
 plot(paramsRasch$items[,2],
      paramsRasch_missing$items[,2])
 abline(0,1,col="red")
+
+# ---- Percentage of ties effect
+# Put both difficulty vectors in the same explicit item order
+item_names <- names(binary_responses_filt2)
+item_names_missing <- names(binary_responses_missing_filt2)
+
+# Tie rate among originally observed responses, separately for each item
+main_matrix <- as.matrix(binary_responses_filt2[, item_names, drop = FALSE])
+missing_matrix <- as.matrix(binary_responses_missing_filt2[, item_names_missing, drop = FALSE])
+
+tie_rate <- colSums(!is.na(main_matrix) & is.na(missing_matrix)) /
+  colSums(!is.na(main_matrix))
+
+# Item-level difficulty change: negative means lower b in missing condition
+difficulty_change <- b2 - b1
+
+item_results <- data.frame(
+  item = item_names,
+  tie_rate = tie_rate,
+  b_main = b1,
+  b_missing = b2,
+  difficulty_change = difficulty_change
+)
+
+cat("Items retained:", nrow(item_results), "\n")
+cat(sprintf("Tie rate: min %.1f%%, mean %.1f%%,std %.1f%%,median %.1f%%, max %.1f%%\n",
+            100 * min(tie_rate),
+            100 * mean(tie_rate),
+            100 * sd(tie_rate),
+            100 * median(tie_rate),
+            100 * max(tie_rate)))
+cat(sprintf("Mean difficulty change: %.3f\n",
+            mean(difficulty_change)))
+cat(sprintf("Correlation of tie rate with difficulty change: r = %.3f\n",
+            cor(tie_rate, difficulty_change)))
+cat(sprintf("Correlation of initial difficulty and difficulty change: r = %.3f\n",
+            cor(b1, difficulty_change)))
+cat(sprintf("Difficulty correlation: r = %.3f; R-squared = %.3f\n",
+            cor(b1, b2),
+            cor(b1, b2)^2))
+
+# Inspect the items with the highest tie rates
+print(item_results[order(-item_results$tie_rate), ][1:10, ])
+
+# Plot tie rate against difficulty change
+plot(100 * tie_rate, difficulty_change,
+     xlab = "Ties among observed responses (%)",
+     ylab = "Difficulty change (missing - main)")
+abline(lm(difficulty_change ~ tie_rate), col = "red")
 
 difficulties<-data.frame(x=(scale(paramsRasch$items[,2])),y=(scale(paramsRasch_missing$items[,2])))
 participant_scores<-data.frame(x=(mlScores),y=(mlScores_missing))
 
 model <- lm(paramsRasch$items[,2] ~ paramsRasch_missing$items[,2])
 summary(model)
-
-#write.csv(paramsRasch, 'Documents/projects/github/MMBB_emotion_demo/part1_adaptive/other/data/output/binary_responses/irt_models/rasch_mirt.csv', row.names=FALSE)
-#write.csv(infit_outfit_Rasch, 'Documents/projects/github/MMBB_emotion_demo/part1_adaptive/other/data/output/binary_responses/irt_models/rasch_infit_outfit.csv', row.names=FALSE)
-#write.csv(participantScores, 'Documents/projects/github/MMBB_emotion_demo/part1_adaptive/other/data/output/binary_responses/irt_models/participantScores.csv', row.names=FALSE)
-
-summary(fitRasch)

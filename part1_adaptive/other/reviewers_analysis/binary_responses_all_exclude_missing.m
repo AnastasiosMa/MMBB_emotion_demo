@@ -72,6 +72,7 @@ end
 %% Create binary matrix of secondary emotion
 subject_id = unique(data(:,end))';
 secondary_binary_responses = nan(length(unique(data(:,end))),(emo_N-2)*length(idx));
+secondary_binary_responses_missing = nan(length(unique(data(:,end))),(emo_N-2)*length(idx));
 for k = 1:length(subject_id)
     j=1;
     participant_data = data(find(data(:,end)==subject_id(k)),:);
@@ -96,6 +97,7 @@ end
 %% Create binary matrix of third emotion
 subject_id = unique(data(:,end))';
 third_binary_responses = nan(length(unique(data(:,end))),(emo_N-3)*length(idx));
+third_binary_responses_missing = nan(length(unique(data(:,end))),(emo_N-3)*length(idx));
 for k = 1:length(subject_id)
     j=1;
     participant_data = data(find(data(:,end)==subject_id(k)),:);

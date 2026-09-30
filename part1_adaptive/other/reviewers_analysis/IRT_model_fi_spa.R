@@ -1,7 +1,7 @@
 library(mirt)
 library(readr)
 
-setwd("Documents/projects/github/MMBB_emotion_demo/part1_adaptive/other/reviewers_analysis/")
+setwd("Documents/projects/github/MMBB_emotion_demo/part1_adaptive/other/")
 binary_responses <- read_csv("reviewers_analysis/data/binary_responses.csv")
 binary_responses_missing <- read_csv("reviewers_analysis/data/binary_responses_missing.csv")
 
